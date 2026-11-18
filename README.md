@@ -17,39 +17,54 @@
 - Админ API-ууд session шалгалттай.
 
 ## Технологи
-Next.js 15 App Router, TypeScript, Tailwind CSS 4, PostgreSQL, Prisma, ExcelJS.
+Next.js 15 App Router, TypeScript, Tailwind CSS 4, PostgreSQL, Prisma, ExcelJS, Upstash Redis rate limiting.
 
-## Ажиллуулах
-1. Node.js 20+ болон PostgreSQL суулгана.
-2. `npm install`
-3. `.env.example` файлыг `.env` болгон хуулна.
-4. Нууц үгийн bcrypt hash үүсгэнэ:
+## Production тохиргоо
 
-   `node -e "console.log(require('bcryptjs').hashSync('CHANGE_THIS_PASSWORD', 12))"`
+1. Node.js 20+ болон PostgreSQL 16 ашиглана.
+2. Environment variables тохируулна:
+   - `DATABASE_URL` — production PostgreSQL connection string.
+   - `ADMIN_USERNAME` — админ нэвтрэх нэр.
+   - `ADMIN_PASSWORD_HASH` — bcrypt cost 12+ hash.
+   - `ADMIN_SESSION_SECRET` — `openssl rand -hex 32` командаар үүсгэсэн 64 тэмдэгтээс багагүй нууц.
+   - `NEXT_PUBLIC_SITE_URL` — HTTPS production домэйн.
+   - `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` — production rate limiting-д заавал.
+3. Dependencies суулгана: `npm install`.
+4. Prisma client үүсгэнэ: `npx prisma generate`.
+5. Production migration ажиллуулна: `npx prisma migrate deploy`.
+6. Үндсэн сугалааг үүсгэнэ: `npm run db:seed`.
+7. Build: `npm run build`; start: `npm run start`.
+8. `/api/health` endpoint-оор database холболтыг шалгана.
+9. PostgreSQL автомат backup/PITR идэвхжүүлж, сэргээх туршилт хийнэ.
 
-5. `.env` дотор `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`, `ADMIN_SESSION_SECRET` (хамгийн багадаа 32 тэмдэгт), `DATABASE_URL` тохируулна.
-6. `npx prisma generate`
-7. `npx prisma migrate dev --name init`
-8. `npm run db:seed`
-9. `npm run dev`
+Админ нууц үгийн hash үүсгэх:
+```bash
+node -e "console.log(require('bcryptjs').hashSync('YOUR_LONG_PASSWORD', 12))"
+```
 
-Админ нэвтрэх URL: `http://localhost:3000/admin/login`.
+Session cookie нь HttpOnly, Secure (production), SameSite=Strict тохиргоотой. Хайлт 12 хүсэлт/минут, админ нэвтрэлт 5 оролдлого/15 минутын sliding-window хязгаартай. Redis тохиргоо байхгүй үед production хайлт болон login зориудаар хаагдана.
 
 ## Excel формат
-Дэмжих формат: `.xlsx`, `.csv` (12MB хүртэл).
 
-Дараах баганууд шаардлагатай:
-- `transaction_date` (эсвэл `date`, `огноо`, `гүйлгээний огноо`)
-- `phone_number` (эсвэл `phone`, `утас`, `утасны дугаар`)
-- `ticket_count` (эсвэл `tickets`, `сугалааны эрх`, `эрхийн тоо`)
-- `transaction_id` (эсвэл `id`, `гүйлгээний дугаар`, `гүйлгээний утга`) — давхардал танихад шаардлагатай. Байхгүй бол файлын мөрийн дугаараар үүсгэнэ.
+Дэмжих формат: `.xlsx`, `.csv` (12MB хүртэл, нэг файлд 50,000 мөр хүртэл).
+
+Дараах баганууд **заавал** шаардлагатай:
+- `transaction_id` (эсвэл `id`, `гүйлгээний дугаар`, `гүйлгээний утга`) — давхардал танихад шаардлагатай.
+- `transaction_date` (эсвэл `date`, `огноо`, `гүйлгээний огноо`).
+- `phone_number` (эсвэл `phone`, `утас`, `утасны дугаар`).
+- `ticket_count` (эсвэл `tickets`, `сугалааны эрх`, `эрхийн тоо`).
 
 APPEND: өмнөх мэдээлэлд шинэ мөр нэмнэ.
-REPLACE: тухайн идэвхтэй сугалааны мэдээллийг бүхэлд нь сольж, өмнөх мөрүүдийг snapshot болгон хадгална.
+REPLACE: алдаагүй файлын мэдээллээр тухайн идэвхтэй сугалааг бүхэлд нь сольж, өмнөх мөрүүдийг snapshot болгон хадгална. Алдаатай мөртэй REPLACE файлыг аюулгүй байдлын үүднээс хүлээн авахгүй.
 
-## Анхаарах зүйл
-- Одоогийн хувилбарт анхны сугалааг seed скрипт үүсгэнэ.
-- Excel import endpoint нь баганын нэрээр автоматаар тааруулдаг; дурын баганын нэрийг сонгох визуал mapping одоогоор байхгүй.
-- Facebook share нь сайтны URL ба Open Graph preview-г ашиглана. Facebook-ийн preview cache шинэчлэгдэхэд хугацаа шаардаж болно.
-- Production-д байрлуулахын өмнө migrations, environment variables, HTTPS, database backup, rate limiting болон бодит Excel файлуудаар QA тест хийх шаардлагатай.
-- Одоогоор automated test suite болон production deployment тохиргоо нэмэгдээгүй.
+## CI ба deployment
+GitHub Actions нь push болон pull request бүрт PostgreSQL service дээр Prisma migration, ESLint, TypeScript, Next.js production build шалгана.
+
+## Одоогоор үлдсэн production ажил
+- Бодит hosting, домэйн, PostgreSQL, Upstash Redis credentials тохируулах.
+- Object storage (S3/R2 зэрэг) холбож админаас зураг upload хийх.
+- Админд сугалааны мэдээлэл засах UI болон Excel баганын визуал mapping нэмэх.
+- Бодит Excel файлууд болон олон хэрэглэгчийн ачааллын тест хийх.
+- Facebook Open Graph зурагт өөрийн эрхтэй зураг ашиглах.
+
+Production deployment нь environment тохиргоо болон бодит өгөгдлийн QA дууссаны дараа л бэлэн гэж тооцогдоно.
