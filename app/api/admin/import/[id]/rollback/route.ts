@@ -26,9 +26,9 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
       if (current.mode === "REPLACE") {
         if (!Array.isArray(current.snapshot)) throw new Error("SNAPSHOT_MISSING");
         await tx.lotteryTransaction.deleteMany({ where: { campaignId: current.campaignId } });
-        const snapshot = current.snapshot as { transactionId: string; transactionDate: string; phoneNumber: string; ticketCount: number }[];
+        const snapshot = current.snapshot as { transactionId: string; transactionDate: string; phoneNumber: string; ticketCount: number; sourceFileHash?: string | null; sourceSheet?: string | null; sourceRow?: number | null; importBatchId?: string | null }[];
         if (snapshot.length) await tx.lotteryTransaction.createMany({ data: snapshot.map(row => ({
-          campaignId: current.campaignId, transactionId: row.transactionId, transactionDate: new Date(row.transactionDate), phoneNumber: row.phoneNumber, ticketCount: row.ticketCount
+          campaignId: current.campaignId, transactionId: row.transactionId, transactionDate: new Date(row.transactionDate), phoneNumber: row.phoneNumber, ticketCount: row.ticketCount, sourceFileHash: row.sourceFileHash ?? null, sourceSheet: row.sourceSheet ?? null, sourceRow: row.sourceRow ?? null, importBatchId: row.importBatchId ?? null
         })) });
       } else {
         await tx.lotteryTransaction.deleteMany({ where: { importBatchId: current.id } });
