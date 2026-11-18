@@ -10,11 +10,11 @@ export async function GET() {
       select: { id: true, title: true, description: true, heroImageUrl: true, targetTicketCount: true, bankName: true, bankLogoUrl: true, accountHolder: true, accountNumber: true, iban: true, facebookPageUrl: true, heroEyebrow: true, heroOverline: true, faqContent: true, stepsContent: true, closingTitle: true, footerDescription: true }
     });
     if (!campaign) return NextResponse.json({ campaign: null, progress: null }, { headers: { "Cache-Control": "no-store" } });
-    const [totals, participants] = await Promise.all([db.lotteryTransaction.aggregate({ where: { campaignId: campaign.id }, _sum: { ticketCount: true } }), db.lotteryTransaction.findMany({ where: { campaignId: campaign.id }, distinct: ["phoneNumber"], select: { phoneNumber: true } })]);
+    const [totals, participantRows] = await Promise.all([db.lotteryTransaction.aggregate({ where: { campaignId: campaign.id }, _sum: { ticketCount: true } }), db.$queryRaw<Array<{ count: number }>>`SELECT COUNT(DISTINCT "phoneNumber")::int AS count FROM "LotteryTransaction" WHERE "campaignId" = ${campaign.id}`]);
     const tickets = totals._sum.ticketCount ?? 0;
     const target = campaign.targetTicketCount;
     const publicCampaign = { title: campaign.title, description: campaign.description, heroImageUrl: campaign.heroImageUrl, bankName: campaign.bankName, bankLogoUrl: campaign.bankLogoUrl, accountHolder: campaign.accountHolder, accountNumber: campaign.accountNumber, iban: campaign.iban, facebookPageUrl: campaign.facebookPageUrl, heroEyebrow: campaign.heroEyebrow, heroOverline: campaign.heroOverline, faqContent: campaign.faqContent, stepsContent: campaign.stepsContent, closingTitle: campaign.closingTitle, footerDescription: campaign.footerDescription };
-    return NextResponse.json({ campaign: publicCampaign, stats: { participants: participants.length, tickets }, progress: target && target > 0 ? { percent: Math.min(100, Math.round((tickets / target) * 100)) } : null }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ campaign: publicCampaign, stats: { participants: Number(participantRows[0]?.count ?? 0), tickets }, progress: target && target > 0 ? { percent: Math.min(100, Math.round((tickets / target) * 100)) } : null }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return NextResponse.json({ error: "Түр алдаа гарлаа." }, { status: 503 });
   }
