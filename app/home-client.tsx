@@ -22,7 +22,7 @@ export default function HomePage() {
 
   async function searchPhone(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!/^\\d{8}$/.test(phone)) { setMessage("Утасны дугаар 8 оронтой байх шаардлагатай."); return; }
+    if (!/^\d{8}$/.test(phone)) { setMessage("Утасны дугаар 8 оронтой байх шаардлагатай."); return; }
     setLoading(true); setMessage(""); setResult(null);
     try {
       const response = await fetch("/api/search?phone=" + encodeURIComponent(phone), { cache: "no-store" });
@@ -80,7 +80,7 @@ export default function HomePage() {
           <div className="panel-heading"><div className="panel-icon"><Search size={21}/></div><div><h3>Утасны дугаараа оруулна уу</h3><p>8 оронтой дугаар ашиглана уу</p></div></div>
           <form className="search-card" onSubmit={searchPhone}>
             <label className="search-label" htmlFor="phone">ТАНЫ УТАСНЫ ДУГААР</label>
-            <div className="phone-field"><span className="country-code">+976</span><input id="phone" className="phone-input" type="tel" inputMode="numeric" autoComplete="tel-national" maxLength={8} placeholder="9911 2233" value={phone} onChange={e=>{setPhone(e.target.value.replace(/\\D/g,"").slice(0,8));setMessage("");setResult(null);}} /></div>
+            <div className="phone-field"><span className="country-code">+976</span><input id="phone" className="phone-input" type="tel" inputMode="numeric" autoComplete="tel-national" maxLength={8} placeholder="9911 2233" value={phone} onChange={e=>{setPhone(e.target.value.replace(/\D/g,"").slice(0,8));setMessage("");setResult(null);}} /></div>
             <div className="input-hint"><span>Зөвхөн тоо оруулна уу</span><span>{phone.length}/8</span></div>
             <button className="search-submit" type="submit" disabled={phone.length!==8 || loading}><Search size={18}/>{loading ? "ШАЛГАЖ БАЙНА..." : "СУГАЛААГАА ШАЛГАХ"}<ChevronRight size={17}/></button>
             {message && <div role="status" className={message.includes("бүртгэл олдсонгүй") ? "notice notice-warn" : "notice notice-error"}>{message}</div>}
