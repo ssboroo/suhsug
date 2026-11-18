@@ -5,12 +5,13 @@ import { ArrowRight, CheckCircle2, Facebook, Search, ShieldCheck, Sparkles, Trop
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
 type PublicCampaign = {
+  targetTicketCount: number | null;
   title: string; description: string; heroImageUrl: string | null; bankName: string | null; bankLogoUrl: string | null; accountHolder: string | null; accountNumber: string | null; iban: string | null; heroEyebrow: string | null;
   heroOverline: string | null; faqContent: string | null; stepsContent: string | null;
   closingTitle: string | null; footerDescription: string | null;
   facebookPageUrl: string | null;
 };
-type PublicProgress = { percent: number };
+type PublicProgress = { percent: number; sold: number; target: number | null; remaining: number | null };
 
 const defaultHorseImage = "https://commons.wikimedia.org/wiki/Special:FilePath/Herd_of_horses_in_Mongolia.jpg?width=2000";
 
@@ -59,7 +60,7 @@ export default function HomePage() {
     <main className="home-v2">
       <header className="home-v2-header">
         <a href="#home" className="home-v2-brand" aria-label="Сүхбаатарын хурд нүүр хуудас">
-          <span className="home-v2-emblem">ᠮ</span>
+          <span className="home-v2-emblem" aria-hidden="true"><svg viewBox="0 0 48 48" role="img"><path d="M10 34c4-2 6-6 7-11l-3-7 7 2 4-5 4 2 2 7 8 5-4 3-5-2-2 7-5 4-3-3 2-6-6 1-2 6-4 1 1-4-4 2z" fill="currentColor"/><path d="M22 16l-1-7 5 4M29 14l5-5-1 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
           <span><strong>СҮХБААТАРЫН ХУРД</strong><small>СУГАЛААТ ХУДАЛДАА</small></span>
         </a>
         <nav className="home-v2-nav" aria-label="Үндсэн цэс">
@@ -85,6 +86,24 @@ export default function HomePage() {
               {progress ? <strong className="home-v2-progress-percent">{progress.percent}%</strong> : <span className="home-v2-progress-live">АЛБАН ЁСНЫ</span>}
               {progress && <span className="home-v2-progress-line"><i style={{width: progress.percent + "%"}}/></span>}
             </div>
+            <section className="home-v2-live-card" aria-label="Сугалааны явц">
+              <div className="home-v2-live-head">
+                <span className="home-v2-live-symbol"><Trophy size={17}/></span>
+                <span><small>ОДОО ЯВАГДАЖ БУЙ</small><strong>{campaign?.title || "Сүхбаатарын хурд"}</strong></span>
+                <span className="home-v2-live-badge"><i/> ИДЭВХТЭЙ</span>
+              </div>
+              <div className="home-v2-live-numbers">
+                <div><strong>{(stats?.tickets ?? 0).toLocaleString("mn-MN")}</strong><small>БОРЛУУЛАГДСАН ЭРХ</small></div>
+                <div><strong>{campaign?.targetTicketCount ? campaign.targetTicketCount.toLocaleString("mn-MN") : "—"}</strong><small>НИЙТ ЭРХ</small></div>
+                <div><strong>{campaign?.targetTicketCount ? Math.max(0, campaign.targetTicketCount - (stats?.tickets ?? 0)).toLocaleString("mn-MN") : "—"}</strong><small>ҮЛДСЭН ЭРХ</small></div>
+              </div>
+              <div className="home-v2-live-track"><span style={{width: (progress?.percent ?? 0) + "%"}}/></div>
+              <div className="home-v2-live-foot">
+                <strong>{progress ? progress.percent + "% дүүргэлт" : "Дүүргэлтийн зорилт тохируулаагүй"}</strong>
+                <span>{(stats?.participants ?? 0).toLocaleString("mn-MN")} оролцогч</span>
+              </div>
+              <p>Сугалааны бүртгэл шинэчлэгдэх бүрд явцын тоо автоматаар шинэчлэгдэнэ.</p>
+            </section>
             <button className="home-v2-share" type="button" onClick={shareCampaign}><Facebook size={15}/> Facebook дээр хуваалцах</button>
           </div>
 
