@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const campaign = await db.campaign.findFirst({
       where: { isActive: true, status: "PUBLISHED" },
-      select: { id: true, title: true, targetTicketCount: true, description: true, heroImageUrl: true, targetTicketCount: true, bankName: true, bankLogoUrl: true, accountHolder: true, accountNumber: true, iban: true, facebookPageUrl: true, heroEyebrow: true, heroOverline: true, faqContent: true, stepsContent: true, closingTitle: true, footerDescription: true }
+      select: { id: true, title: true, description: true, heroImageUrl: true, targetTicketCount: true, bankName: true, bankLogoUrl: true, accountHolder: true, accountNumber: true, iban: true, facebookPageUrl: true, heroEyebrow: true, heroOverline: true, faqContent: true, stepsContent: true, closingTitle: true, footerDescription: true }
     });
     if (!campaign) return NextResponse.json({ campaign: null, progress: null }, { headers: { "Cache-Control": "no-store" } });
     const [totals, participantRows] = await Promise.all([db.lotteryTransaction.aggregate({ where: { campaignId: campaign.id }, _sum: { ticketCount: true } }), db.$queryRaw<Array<{ count: number }>>`SELECT COUNT(DISTINCT "phoneNumber")::int AS count FROM "LotteryTransaction" WHERE "campaignId" = ${campaign.id}`]);
