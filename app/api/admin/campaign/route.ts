@@ -3,13 +3,15 @@ import { z } from "zod";
 import { isAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Нэвтрэх шаардлагатай." }, { status: 401 });
-  const campaign = await db.campaign.findFirst({ where: { isActive: true }, select: { id: true, title: true, description: true, heroImageUrl: true, targetTicketCount: true, bankName: true, bankLogoUrl: true, accountHolder: true, accountNumber: true, iban: true, facebookPageUrl: true, heroEyebrow: true, heroOverline: true, faqContent: true, stepsContent: true, closingTitle: true, footerDescription: true, status: true } });
+  const campaignId = request.nextUrl.searchParams.get("campaignId");
+  const campaign = await db.campaign.findFirst({ where: campaignId ? { id: campaignId } : { isActive: true }, select: { id: true, title: true, description: true, heroImageUrl: true, targetTicketCount: true, bankName: true, bankLogoUrl: true, accountHolder: true, accountNumber: true, iban: true, facebookPageUrl: true, heroEyebrow: true, heroOverline: true, faqContent: true, stepsContent: true, closingTitle: true, footerDescription: true, status: true } });
   return NextResponse.json({ campaign });
 }
 
 const updateSchema = z.object({
+  campaignId: z.string().min(1),
   title: z.string().trim().min(2).max(100),
   description: z.string().trim().max(600),
   heroImageUrl: z.union([z.literal(""), z.string().url().max(2048)]),
@@ -34,11 +36,11 @@ export async function PATCH(request: NextRequest) {
   const body = await request.json().catch(() => null);
   const parsed = updateSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Мэдээллээ шалгана уу. Зурагны холбоос HTTPS байх ёстой." }, { status: 400 });
-  const { title, description, heroImageUrl, targetTicketCount, bankName, bankLogoUrl, accountHolder, accountNumber, iban, facebookPageUrl, heroEyebrow, heroOverline, faqContent, stepsContent, closingTitle, footerDescription, status } = parsed.data;
+  const { campaignId, title, description, heroImageUrl, targetTicketCount, bankName, bankLogoUrl, accountHolder, accountNumber, iban, facebookPageUrl, heroEyebrow, heroOverline, faqContent, stepsContent, closingTitle, footerDescription, status } = parsed.data;
   if (bankLogoUrl && new URL(bankLogoUrl).protocol !== "https:") return NextResponse.json({ error: "Банкны логоны холбоос HTTPS байх ёстой." }, { status: 400 });
   if (facebookPageUrl && new URL(facebookPageUrl).protocol !== "https:") return NextResponse.json({ error: "Facebook Page холбоос HTTPS байх ёстой." }, { status: 400 });
   if (heroImageUrl && new URL(heroImageUrl).protocol !== "https:") return NextResponse.json({ error: "Зургийн холбоос HTTPS байх ёстой." }, { status: 400 });
-  const campaign = await db.campaign.findFirst({ where: { isActive: true }, select: { id: true } });
+  const campaign = await db.campaign.findUnique({ where: { id: campaignId }, select: { id: true } });
   if (!campaign) return NextResponse.json({ error: "Идэвхтэй сугалаа олдсонгүй." }, { status: 404 });
   const updated = await db.$transaction(async tx => {
     const row = await tx.campaign.update({ where: { id: campaign.id }, data: { title, description, heroImageUrl: heroImageUrl || null, targetTicketCount, bankName: bankName || null, bankLogoUrl: bankLogoUrl || null, accountHolder: accountHolder || null, accountNumber: accountNumber || null, iban: iban || null, facebookPageUrl: facebookPageUrl || null, heroEyebrow: heroEyebrow || null, heroOverline: heroOverline || null, faqContent: faqContent || null, stepsContent: stepsContent || null, closingTitle: closingTitle || null, footerDescription: footerDescription || null, status } });
