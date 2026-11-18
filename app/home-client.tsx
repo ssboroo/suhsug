@@ -7,8 +7,7 @@ type Result = { transactionDate: string; phoneNumber: string; ticketCount: numbe
 type PublicCampaign = {
   title: string; description: string; heroImageUrl: string | null; bankName: string | null; bankLogoUrl: string | null; accountHolder: string | null; accountNumber: string | null; iban: string | null; heroEyebrow: string | null;
   heroOverline: string | null; faqContent: string | null; stepsContent: string | null;
-  closingTitle: string | null; footerDescription: string | null; bankName: string | null;
-  accountHolder: string | null; accountNumber: string | null; iban: string | null;
+  closingTitle: string | null; footerDescription: string | null;
   facebookPageUrl: string | null;
 };
 type PublicProgress = { percent: number };
