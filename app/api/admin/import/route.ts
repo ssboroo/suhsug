@@ -1,0 +1,102 @@
+import { NextRequest, NextResponse } from "next/server";
+import ExcelJS from "exceljs";
+import { isAdmin } from "@/lib/auth";
+import { db } from "@/lib/db";
+
+function normalizePhone(value: unknown) {
+  const digits = String(value ?? "").replace(/\D/g, "");
+  return digits.length === 8 ? digits : "";
+}
+function dateValue(value: unknown): Date | null {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) return value;
+  if (typeof value === "number") {
+    const d = new Date(Date.UTC(1899, 11, 30) + value * 86400000);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+  const d = new Date(String(value ?? ""));
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+export async function GET() {
+  if (!(await isAdmin())) return NextResponse.json({ error: "Нэвтрэх шаардлагатай." }, { status: 401 });
+  const campaign = await db.campaign.findFirst({ where: { isActive: true }, select: { id: true } });
+  if (!campaign) return NextResponse.json({ imports: [] });
+  const imports = await db.importBatch.findMany({ where: { campaignId: campaign.id }, orderBy: { createdAt: "desc" }, take: 50,
+    select: { id: true, fileName: true, mode: true, status: true, totalRows: true, importedRows: true, rejectedRows: true, duplicateRows: true, createdAt: true } });
+  return NextResponse.json({ imports });
+}
+
+export async function POST(request: NextRequest) {
+  if (!(await isAdmin())) return NextResponse.json({ error: "Нэвтрэх шаардлагатай." }, { status: 401 });
+  const form = await request.formData();
+  const file = form.get("file");
+  const mode = String(form.get("mode") ?? "APPEND");
+  if (!(file instanceof File) || !/\.(xlsx|xls|csv)$/i.test(file.name)) return NextResponse.json({ error: "Excel эсвэл CSV файл сонгоно уу." }, { status: 400 });
+  if (file.size > 12 * 1024 * 1024) return NextResponse.json({ error: "Файлын хэмжээ 12MB-аас бага байх ёстой." }, { status: 400 });
+  if (!["APPEND", "REPLACE"].includes(mode)) return NextResponse.json({ error: "Импортын горим буруу байна." }, { status: 400 });
+  const campaign = await db.campaign.findFirst({ where: { isActive: true } });
+  if (!campaign) return NextResponse.json({ error: "Эхлээд идэвхтэй сугалаа үүсгэнэ үү." }, { status: 400 });
+
+  const workbook = new ExcelJS.Workbook();
+  const bytes = Buffer.from(await file.arrayBuffer());
+  if (file.name.toLowerCase().endsWith(".csv")) {
+    const csv = bytes.toString("utf8");
+    const rows = csv.split(/\r?\n/).filter(Boolean).map(line => line.split(","));
+    rows.forEach((row, i) => { const sheetRow = (workbook.addWorksheet("CSV") as ExcelJS.Worksheet); void sheetRow; });
+    const sheet = workbook.addWorksheet("Импорт");
+    rows.forEach(row => sheet.addRow(row));
+  } else {
+    await workbook.xlsx.load(bytes);
+  }
+  const sheet = workbook.worksheets[0];
+  if (!sheet || sheet.rowCount < 2) return NextResponse.json({ error: "Файлд импортлох мөр олдсонгүй." }, { status: 400 });
+  const headers = (sheet.getRow(1).values as unknown[]).slice(1).map(v => String(v ?? "").trim().toLowerCase());
+  const find = (names: string[]) => headers.findIndex(h => names.includes(h));
+  const dateIndex = find(["transaction_date","date","огноо","гүйлгээний огноо"]);
+  const phoneIndex = find(["phone_number","phone","утас","утасны дугаар"]);
+  const countIndex = find(["ticket_count","tickets","сугалааны эрх","эрхийн тоо"]);
+  const idIndex = find(["transaction_id","id","гүйлгээний дугаар","гүйлгээний утга"]);
+  if ([dateIndex, phoneIndex, countIndex].some(i => i < 0)) return NextResponse.json({ error: "Баганын нэр олдсонгүй. transaction_date, phone_number, ticket_count баганууд шаардлагатай." }, { status: 400 });
+
+  const valid: { transactionId: string; transactionDate: Date; phoneNumber: string; ticketCount: number }[] = [];
+  const errors: { rowNumber: number; message: string }[] = [];
+  const seen = new Set<string>();
+  let duplicates = 0;
+  for (let n = 2; n <= sheet.rowCount; n++) {
+    const row = sheet.getRow(n);
+    const vals = (row.values as unknown[]).slice(1);
+    if (vals.every(v => v == null || String(v).trim() === "")) continue;
+    const phone = normalizePhone(vals[phoneIndex]);
+    const date = dateValue(vals[dateIndex]);
+    const count = Number(vals[countIndex]);
+    const transactionId = idIndex >= 0 ? String(vals[idIndex] ?? "").trim() : "row-" + n;
+    if (!phone || !date || !Number.isInteger(count) || count < 1 || !transactionId) {
+      errors.push({ rowNumber: n, message: "Утасны дугаар, огноо, эрхийн тоо эсвэл гүйлгээний ID буруу." }); continue;
+    }
+    const key = transactionId;
+    if (seen.has(key)) { duplicates++; continue; }
+    seen.add(key);
+    valid.push({ transactionId, transactionDate: date, phoneNumber: phone, ticketCount: count });
+  }
+
+  const previous = await db.lotteryTransaction.findMany({ where: { campaignId: campaign.id }, select: { transactionId: true, transactionDate: true, phoneNumber: true, ticketCount: true } });
+  const batch = await db.$transaction(async tx => {
+    const created = await tx.importBatch.create({ data: {
+      campaignId: campaign.id, fileName: file.name, mode, status: "COMPLETED",
+      totalRows: Math.max(0, sheet.rowCount - 1), importedRows: valid.length, rejectedRows: errors.length, duplicateRows: duplicates,
+      snapshot: mode === "REPLACE" ? previous.map(p => ({ ...p, transactionDate: p.transactionDate.toISOString() })) : undefined
+    }});
+    if (mode === "REPLACE") await tx.lotteryTransaction.deleteMany({ where: { campaignId: campaign.id } });
+    for (const item of valid) {
+      try {
+        await tx.lotteryTransaction.create({ data: { ...item, campaignId: campaign.id, importBatchId: created.id } });
+      } catch {
+        duplicates++;
+      }
+    }
+    if (errors.length) await tx.importError.createMany({ data: errors.map(e => ({ batchId: created.id, ...e })) });
+    await tx.adminAuditLog.create({ data: { action: "EXCEL_IMPORT", details: { fileName: file.name, mode, imported: valid.length, rejected: errors.length } } });
+    return created;
+  });
+  return NextResponse.json({ ok: true, batchId: batch.id, imported: valid.length, rejected: errors.length, duplicates, errors: errors.slice(0, 30) });
+}
