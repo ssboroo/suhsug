@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 
 export async function GET() {
   if (!(await isAdmin())) return NextResponse.json({ error: "Нэвтрэх шаардлагатай." }, { status: 401 });
-  const campaign = await db.campaign.findFirst({ where: { isActive: true }, select: { id: true, title: true } });
+  const campaign = await db.campaign.findFirst({ where: { isActive: true }, select: { id: true, title: true, description: true, heroImageUrl: true, status: true } });
   if (!campaign) return NextResponse.json({ participants: 0, tickets: 0, campaign: null, imports: [] });
   const [participants, totals, imports] = await Promise.all([
     db.lotteryTransaction.findMany({ where: { campaignId: campaign.id }, distinct: ["phoneNumber"], select: { phoneNumber: true } }),
