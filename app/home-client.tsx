@@ -190,7 +190,7 @@ export default function HomePage() {
       <section className="home-v2-inspiration" aria-labelledby="inspiration-title">
         <div className="home-v2-inspiration-head">
           <div><span className="home-v2-section-kicker">МОНГОЛ ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ</span><h2 id="inspiration-title">Сугалааны <em>загварууд</em></h2><p>Дараах нь нэр, зураг, өнгө төрхийн жишээ загварууд юм. Бодит сугалаа биш.</p></div>
-          <div className="home-v2-collection-edition"><span>2026</span><small>PREMIUM HORSE RACING EDITION</small></div>
+          
         </div>
         <div className="home-v2-inspiration-grid">
           <article className="home-v2-inspiration-card">
