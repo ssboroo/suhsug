@@ -73,6 +73,7 @@ model ImportBatch {
   importedRows  Int      @default(0)
   rejectedRows  Int      @default(0)
   duplicateRows Int      @default(0)
+  duplicatePhoneRows Int @default(0)
   snapshot      Json?
   createdAt     DateTime @default(now())
   campaign      Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
