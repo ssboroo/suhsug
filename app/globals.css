@@ -1026,3 +1026,180 @@ html{scroll-behavior:smooth;scroll-padding-top:86px}
  .lux-header nav{display:none}
  html{scroll-padding-top:125px}
 }
+
+/* SUHSUG — premium Mongolian equestrian experience */
+.neo-site{--n-bg:#0b120e;--n-green:#15251b;--n-green2:#203629;--n-gold:#c8a46b;--n-gold2:#ead7b0;--n-paper:#f5f1e8;--n-ink:#1a2a20;--n-muted:#777e72;background:var(--n-paper);color:var(--n-ink);font-family:Manrope,"Noto Sans Mongolian",sans-serif;overflow:hidden}
+.neo-site *{box-sizing:border-box}
+.neo-header{height:84px;padding:0 clamp(20px,6vw,92px);display:flex;align-items:center;justify-content:space-between;gap:26px;background:#0b120e;color:#f7f0e4;border-bottom:1px solid #c8a46b55;position:relative;z-index:20}
+.neo-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#f5eddf;flex-shrink:0}
+.neo-brand-mark{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--n-gold);color:var(--n-gold2);font-family:"Noto Serif Mongolian",serif;font-size:16px;position:relative}
+.neo-brand-mark:after{content:"";position:absolute;inset:4px;border:1px solid #c8a46b50}
+.neo-brand b{display:block;font-family:"Noto Serif Mongolian",serif;font-size:12px;letter-spacing:.13em;font-weight:600}
+.neo-brand small{display:block;margin-top:5px;color:#bda77f;font-size:7px;letter-spacing:.22em}
+.neo-nav{display:flex;align-items:center;gap:clamp(14px,2.6vw,38px)}
+.neo-nav a{color:#d7d2c6;text-decoration:none;font-size:8px;font-weight:700;letter-spacing:.15em;transition:color .2s}
+.neo-nav a:hover{color:var(--n-gold2)}
+.neo-header-search{height:43px;display:flex;align-items:center;border:1px solid #c8a46b80;background:#ffffff08;min-width:290px}
+.neo-header-search>span{padding:0 10px;color:#d7bf94;border-right:1px solid #ffffff22;font-size:10px}
+.neo-header-search input{width:115px;min-width:0;flex:1;height:100%;padding:0 11px;background:transparent;border:0;outline:0;color:white;font-size:12px;letter-spacing:.08em}
+.neo-header-search input::placeholder{color:#999b90}
+.neo-header-search button{height:100%;padding:0 13px;display:flex;align-items:center;gap:8px;border:0;background:linear-gradient(120deg,#ae8549,#e5d0a6);color:#172219;font-size:8px;font-weight:900;letter-spacing:.12em;white-space:nowrap}
+.neo-header-search button:disabled{opacity:.48}
+.neo-hero{height:min(810px,calc(100svh - 84px));min-height:650px;position:relative;isolation:isolate;display:flex;align-items:center;padding:65px clamp(24px,10vw,155px);background-position:center 48%;background-size:cover;color:#fff;overflow:hidden}
+.neo-hero-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(5,13,8,.94) 0%,rgba(7,15,10,.79) 42%,rgba(7,15,10,.12) 100%),linear-gradient(0deg,rgba(4,10,7,.68),transparent 35%)}
+.neo-hero:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.13;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.3'/%3E%3C/svg%3E")}
+.neo-hero-content{position:relative;z-index:3;max-width:650px;animation:neo-rise 1s cubic-bezier(.2,.7,.2,1) both}
+.neo-eyebrow{display:flex;align-items:center;gap:12px;color:#e2c58f;font-size:8px;font-weight:800;letter-spacing:.25em}
+.neo-eyebrow i{width:24px;height:1px;background:var(--n-gold)}
+.neo-pretitle{margin:42px 0 16px;color:#d4c09b;font-size:9px;letter-spacing:.29em}
+.neo-hero h1{margin:0;color:#fff9ee;font-family:"Noto Serif Mongolian",Georgia,serif;font-weight:500;font-size:clamp(65px,9.6vw,132px);line-height:.98;letter-spacing:-.07em;text-shadow:0 7px 35px #0005}
+.neo-hero h1 em{font-style:normal;color:#d6b77e}
+.neo-hero-desc{max-width:440px;margin:24px 0 0;color:#e1e2d9;font-size:12px;line-height:2.1}
+.neo-hero-actions{display:flex;align-items:center;gap:25px;margin-top:30px}
+.neo-primary,.neo-secondary{height:48px;display:inline-flex;align-items:center;gap:13px;text-decoration:none;font-size:8px;font-weight:900;letter-spacing:.14em}
+.neo-primary{padding:0 20px;background:linear-gradient(110deg,#b18a50,#ead7b0);color:#152219;box-shadow:0 9px 28px #0003;transition:transform .25s,box-shadow .25s}
+.neo-primary:hover{transform:translateY(-3px);box-shadow:0 13px 35px #0005}
+.neo-secondary{color:#f3e7d0}
+.neo-hero-note{display:flex;align-items:center;gap:12px;margin-top:53px;color:#d7c7a9;font-size:7px;letter-spacing:.2em}
+.neo-hero-note span{font-family:"Noto Serif Mongolian",serif;font-size:16px;color:#c9a66b}
+.neo-hero-note i{width:34px;height:1px;background:#c9a66b}
+.neo-horse-art{position:absolute;z-index:2;right:5%;bottom:9%;width:min(48vw,650px);color:#e4c995;opacity:.22;filter:drop-shadow(0 10px 40px #0008);animation:neo-horse-float 6s ease-in-out infinite}
+.neo-horse-art svg{width:100%;height:auto;overflow:visible}
+.neo-horse-art svg path:first-child{transform-origin:50% 60%;animation:neo-horse-breathe 3.5s ease-in-out infinite}
+.neo-horse-art svg path:nth-child(2){animation:neo-mane 2.2s ease-in-out infinite alternate}
+.neo-orbit{position:absolute;z-index:1;border:1px solid #d8bd8b20;border-radius:50%;pointer-events:none}
+.neo-orbit-one{width:520px;height:520px;right:4%;top:8%;animation:neo-orbit 55s linear infinite}
+.neo-orbit-two{width:390px;height:390px;right:9%;top:17%;border-style:dashed;animation:neo-orbit 75s linear infinite reverse}
+.neo-hero-bottom{position:absolute;left:clamp(24px,6vw,92px);right:clamp(24px,6vw,92px);bottom:22px;padding-top:13px;border-top:1px solid #ffffff32;display:flex;justify-content:space-between;color:#c9b994;font-size:7px;letter-spacing:.2em;z-index:4}
+.neo-intro{min-height:210px;padding:42px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#eae3d5;border-bottom:1px solid #d6c9b3}
+.neo-intro-symbol{color:#ae8952;font-size:22px;animation:neo-spin 22s linear infinite}
+.neo-intro p{margin:12px 0 8px;color:#213326;font-family:"Noto Serif Mongolian",serif;font-size:clamp(18px,2.5vw,26px);line-height:1.7;letter-spacing:.035em}
+.neo-intro p em{font-style:normal;color:#a27a43}
+.neo-intro>span{font-size:9px;color:#7c7d70;letter-spacing:.08em}
+.neo-campaigns{padding:90px clamp(20px,7vw,110px) 100px;background:var(--n-paper)}
+.neo-section-head{max-width:1320px;margin:0 auto 35px;display:flex;align-items:end;justify-content:space-between;gap:35px}
+.neo-label{color:#9a7745;font-size:8px;font-weight:900;letter-spacing:.23em}
+.neo-section-head h2,.neo-account-heading h2{margin:12px 0 0;color:#1a2a20;font-family:"Noto Serif Mongolian",serif;font-size:clamp(33px,4.3vw,53px);font-weight:500;letter-spacing:-.055em}
+.neo-section-head h2 em,.neo-account-heading h2 em,.neo-verify-copy h2 em{font-style:normal;color:#a47b44}
+.neo-section-head>p{max-width:390px;margin:0 0 5px;color:#73796e;font-size:10px;line-height:2}
+.neo-campaign-grid{max-width:1320px;margin:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px}
+.neo-campaign{background:#fffdf8;border:1px solid #dcd3c4;transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s,border-color .3s;animation:neo-rise .7s both}
+.neo-campaign:nth-child(2){animation-delay:.1s}.neo-campaign:nth-child(3){animation-delay:.2s}
+.neo-campaign:hover,.neo-campaign.is-active{transform:translateY(-6px);border-color:#b38d55;box-shadow:0 25px 65px #1c2a1d16}
+.neo-campaign>button{display:block;width:100%;padding:0;text-align:left;border:0;background:none;color:inherit;cursor:pointer}
+.neo-campaign-image{height:255px;position:relative;background-size:cover;background-position:center;overflow:hidden}
+.neo-campaign-image:after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 40%,#ffffff12);transition:transform .8s}
+.neo-campaign:hover .neo-campaign-image:after{transform:translateX(15%)}
+.neo-campaign-index{position:absolute;top:17px;left:18px;color:#f3dcb3;font-family:"Noto Serif Mongolian",serif;font-size:23px}
+.neo-live{position:absolute;top:20px;right:17px;display:flex;align-items:center;gap:7px;color:#fff;font-size:7px;letter-spacing:.16em}
+.neo-live i{width:6px;height:6px;border-radius:50%;background:#a6c58b;box-shadow:0 0 0 4px #a6c58b25;animation:neo-pulse 2s infinite}
+.neo-campaign-image>b{position:absolute;left:21px;right:15px;bottom:19px;color:#fff9ed;font-family:"Noto Serif Mongolian",serif;font-size:20px;font-weight:600}
+.neo-campaign-body{padding:22px}
+.neo-campaign-numbers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.neo-campaign-numbers span{display:flex;flex-direction:column;gap:7px}
+.neo-campaign-numbers b{font-size:21px;color:#24382a;font-weight:700;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.neo-campaign-numbers small{font-size:7px;color:#898a7d;letter-spacing:.12em}
+.neo-progress{height:3px;margin-top:21px;background:#e9e2d6;overflow:hidden}
+.neo-progress i{display:block;height:100%;background:linear-gradient(90deg,#94713d,#e2c58f);transition:width 1s cubic-bezier(.2,.7,.2,1)}
+.neo-progress-caption{display:flex;justify-content:space-between;gap:10px;margin-top:10px}
+.neo-progress-caption span{font-size:7px;color:#9a7745;letter-spacing:.12em}.neo-progress-caption b{font-size:8px;color:#6c7569}
+.neo-campaign-action{display:flex;justify-content:space-between;align-items:center;margin-top:19px;padding-top:14px;border-top:1px solid #ebe4d8;color:#997442;font-size:8px;font-weight:900;letter-spacing:.14em}
+.neo-empty{min-height:190px;border:1px solid #d9d0c0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#a17c48}
+.neo-empty b{font-family:"Noto Serif Mongolian",serif;color:#213326;font-size:18px}.neo-empty span{font-size:10px;color:#858579}
+.neo-account{padding:76px clamp(20px,7vw,110px);display:grid;grid-template-columns:minmax(230px,.8fr) minmax(0,1.5fr);gap:55px;align-items:center;background:#14251a;color:#f6eddd;position:relative;overflow:hidden}
+.neo-account:after{content:"";position:absolute;width:500px;height:500px;border:1px solid #d0ae7640;border-radius:50%;right:-200px;top:-300px;box-shadow:0 0 0 45px #d0ae7608,0 0 0 90px #d0ae7606;pointer-events:none}
+.neo-account-heading,.neo-account-card{position:relative;z-index:1}
+.neo-account-heading .neo-label{color:#d6b982}
+.neo-account-heading h2{color:#f5eddf;font-size:clamp(32px,3.7vw,44px)}
+.neo-account-heading h2 em{color:#d8b87e}
+.neo-account-heading p{max-width:360px;color:#c0c6b9;font-size:10px;line-height:2}
+.neo-account-card{padding:27px 30px;border:1px solid #c6a46a80;background:linear-gradient(120deg,#21392a,#17291e);box-shadow:0 25px 65px #0003}
+.neo-account-top{display:flex;align-items:center;gap:16px;padding-bottom:23px;border-bottom:1px solid #ffffff20}
+.neo-bank-icon{width:49px;height:49px;display:grid;place-items:center;flex-shrink:0;background:#f0e5cf;color:#82633b}
+.neo-bank-icon img{width:100%;height:100%;object-fit:contain;padding:7px}
+.neo-account-top>span:nth-child(2){display:flex;flex-direction:column;gap:5px}
+.neo-account-top small,.neo-account-bottom small{font-size:7px;color:#d2b77f;letter-spacing:.17em}
+.neo-account-top b{font-family:"Noto Serif Mongolian",serif;font-size:17px;color:#fff4e2}
+.neo-account-top i,.neo-account-bottom i{font-size:9px;color:#c6cabb;font-style:normal}
+.neo-secure{margin-left:auto;display:flex;align-items:center;gap:7px;color:#d5c49f;font-size:7px;letter-spacing:.12em;white-space:nowrap}
+.neo-account-bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:20px}
+.neo-account-bottom>span{display:flex;flex-direction:column;gap:7px}
+.neo-account-bottom b{font-size:clamp(19px,2.5vw,27px);color:#f1d8a9;letter-spacing:.07em;font-variant-numeric:tabular-nums}
+.neo-account-bottom button{height:42px;padding:0 15px;display:flex;align-items:center;gap:8px;border:1px solid #d4b77e;background:transparent;color:#f1dfbf;font-size:8px;font-weight:800;letter-spacing:.1em;white-space:nowrap}
+.neo-verify{background:#f1ece2}
+.neo-verify-visual{height:240px;background-size:cover;background-position:center 44%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#f6e8ce}
+.neo-verify-visual span{font-size:8px;letter-spacing:.3em;color:#e1c28d}
+.neo-verify-visual b{font-family:"Noto Serif Mongolian",serif;font-size:clamp(20px,3vw,31px);font-weight:500;letter-spacing:.04em}
+.neo-verify-layout{max-width:1120px;margin:auto;padding:86px 24px;display:grid;grid-template-columns:1fr minmax(360px,.92fr);gap:90px;align-items:center}
+.neo-verify-copy h2{margin:15px 0;color:#1a2a20;font-family:"Noto Serif Mongolian",serif;font-size:clamp(44px,5.4vw,65px);font-weight:500;line-height:1.2;letter-spacing:-.06em}
+.neo-verify-copy>p{max-width:390px;color:#777c70;font-size:11px;line-height:2.1}
+.neo-privacy{display:flex;align-items:center;gap:12px;margin-top:30px;color:#9d7844}
+.neo-privacy span{display:flex;flex-direction:column;gap:5px}.neo-privacy b{font-size:10px;color:#2d4132}.neo-privacy small{font-size:9px;color:#85877c}
+.neo-search-card{padding:32px;background:#fffdf8;border:1px solid #c9aa76;box-shadow:0 24px 65px #1b291912;position:relative}
+.neo-search-card:before{content:"";position:absolute;inset:7px;border:1px solid #eee5d6;pointer-events:none}
+.neo-search-card>*{position:relative}
+.neo-search-card-head{display:flex;flex-direction:column;gap:8px;margin-bottom:27px}
+.neo-search-card-head span{font-size:7px;color:#997744;letter-spacing:.19em}
+.neo-search-card-head b{font-family:"Noto Serif Mongolian",serif;font-size:18px;color:#1e3023}
+.neo-search-card form label{display:block;margin-bottom:9px;color:#74796d;font-size:8px;letter-spacing:.15em}
+.neo-phone-field{height:57px;display:flex;align-items:center;border:1px solid #d9d0c0;background:white}
+.neo-phone-field>span{padding:0 15px;border-right:1px solid #e7dfd1;color:#8d7958;font-size:12px}
+.neo-phone-field input{height:100%;min-width:0;flex:1;padding:0 13px;border:0;outline:0;background:transparent;color:#1d2b21;font-size:19px;letter-spacing:.08em}
+.neo-phone-field small{padding:0 12px;color:#a5a294;font-size:9px}
+.neo-search-card form>button{width:100%;height:54px;margin-top:13px;padding:0 17px;display:flex;align-items:center;justify-content:space-between;border:0;background:linear-gradient(110deg,#ae8549,#e5d0a6);color:#1a271d;font-size:8px;font-weight:900;letter-spacing:.13em}
+.neo-search-card form>button:disabled{opacity:.48}
+.neo-message{margin-top:12px;padding:12px;background:#f8eee6;color:#965b43;font-size:10px;line-height:1.6}
+.neo-result{margin-top:17px;padding:14px;background:#f5f1e8;border:1px solid #e2d8c6}
+.neo-result>div{display:flex;align-items:center;gap:8px;color:#55754e;font-size:9px}
+.neo-result section{display:flex;justify-content:space-between;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid #e3d9c8}
+.neo-result section span{display:flex;flex-direction:column;gap:5px}.neo-result section small{font-size:7px;color:#89897c}.neo-result section b{font-size:12px;color:#29382b}
+.neo-card-foot{display:flex;align-items:center;gap:7px;margin-top:21px;padding-top:13px;border-top:1px solid #e9e2d7;color:#85877b;font-size:7px;letter-spacing:.15em}
+.neo-stats{padding:83px clamp(20px,7vw,110px);background:#e8e1d4}
+.neo-stats .neo-section-head{margin-bottom:33px}
+.neo-stats-grid{max-width:1320px;margin:0 auto 28px;display:grid;grid-template-columns:repeat(4,1fr);background:#f7f3eb;border:1px solid #d6cbb9}
+.neo-stats-grid>div{min-height:145px;padding:23px 17px;display:flex;flex-direction:column;justify-content:center;gap:9px;border-right:1px solid #e1d8ca}
+.neo-stats-grid>div:last-child{border:0}
+.neo-stats-grid small{font-size:7px;color:#9b7848;letter-spacing:.16em}
+.neo-stats-grid b{font-size:clamp(24px,3vw,37px);font-weight:700;color:#243629;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.neo-stats-grid span{font-size:7px;color:#828579;letter-spacing:.12em}
+.neo-total-progress{max-width:1320px;margin:auto}
+.neo-total-progress>div{display:flex;justify-content:space-between;color:#747a6e;font-size:8px;letter-spacing:.14em}
+.neo-total-progress>div b{color:#997542}
+.neo-total-progress>i{display:block;height:4px;margin-top:10px;background:#d4cbbb}
+.neo-total-progress>i span{display:block;height:100%;background:linear-gradient(90deg,#98713e,#e3c58e);transition:width 1s}
+.neo-share{margin-top:25px;padding:12px 17px;display:flex;align-items:center;gap:9px;border:1px solid #b38b50;background:transparent;color:#806238;font-size:8px;font-weight:800;letter-spacing:.12em}
+.neo-footer{min-height:135px;padding:29px clamp(20px,7vw,110px);display:flex;align-items:center;justify-content:space-between;gap:22px;background:#0b120e;border-top:1px solid #c8a46b66;color:#e9e1d2}
+.neo-footer p{max-width:330px;color:#b9bbae;font-size:9px;line-height:1.8}
+.neo-footer>small{color:#bda77f;font-size:7px;letter-spacing:.14em}
+@keyframes neo-rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes neo-horse-float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-13px) rotate(1deg)}}
+@keyframes neo-horse-breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.018)}}
+@keyframes neo-mane{from{transform:translateX(0)}to{transform:translateX(4px)}}
+@keyframes neo-orbit{to{transform:rotate(360deg)}}
+@keyframes neo-spin{to{transform:rotate(360deg)}}
+@keyframes neo-pulse{0%,100%{box-shadow:0 0 0 3px #a6c58b20}50%{box-shadow:0 0 0 7px #a6c58b08}}
+@media(max-width:1050px){.neo-header{gap:14px}.neo-nav{gap:14px}.neo-nav a{font-size:7px}.neo-header-search{min-width:255px}.neo-header-search input{width:85px}.neo-horse-art{right:-3%;width:53vw;opacity:.17}.neo-verify-layout{gap:45px}}
+@media(max-width:760px){
+ .neo-header{height:auto;min-height:68px;padding:11px 15px;display:grid;grid-template-columns:1fr;gap:10px}
+ .neo-brand-mark{width:37px;height:37px}.neo-brand b{font-size:10px}.neo-brand small{font-size:6px}
+ .neo-nav{display:none}
+ .neo-header-search{grid-row:2;width:100%;height:43px;min-width:0}
+ .neo-header-search input{width:auto;font-size:14px}
+ .neo-header-search button{padding:0 16px}
+ .neo-hero{height:auto;min-height:690px;padding:62px 22px 78px;background-position:61% center}
+ .neo-hero-shade{background:linear-gradient(90deg,rgba(5,13,8,.91),rgba(7,15,10,.55) 75%,rgba(7,15,10,.28)),linear-gradient(0deg,rgba(4,10,7,.8),transparent 55%)}
+ .neo-hero-content{max-width:100%}.neo-eyebrow{font-size:7px;letter-spacing:.16em}.neo-pretitle{margin-top:43px;font-size:7px;letter-spacing:.18em}
+ .neo-hero h1{font-size:clamp(61px,16vw,88px)}.neo-hero-desc{max-width:310px;font-size:11px}
+ .neo-hero-actions{gap:16px;flex-wrap:wrap}.neo-primary,.neo-secondary{font-size:7px}.neo-primary{padding:0 14px}.neo-hero-note{margin-top:42px;font-size:6px}
+ .neo-horse-art{width:92vw;right:-27%;bottom:5%;opacity:.16}.neo-orbit-one{width:330px;height:330px;right:-28%;top:28%}.neo-orbit-two{width:260px;height:260px;right:-18%;top:34%}
+ .neo-hero-bottom{left:17px;right:17px;bottom:17px;font-size:6px;letter-spacing:.09em}
+ .neo-intro{min-height:180px;padding:35px 15px}.neo-intro p{font-size:17px}
+ .neo-campaigns{padding:57px 16px 63px}.neo-section-head{display:block;margin-bottom:23px}.neo-section-head h2{font-size:35px}.neo-section-head>p{margin-top:12px;font-size:10px}
+ .neo-campaign-grid{grid-template-columns:1fr;gap:15px}.neo-campaign-image{height:218px}.neo-campaign-body{padding:18px}.neo-campaign-numbers b{font-size:19px}
+ .neo-account{padding:53px 17px;grid-template-columns:1fr;gap:20px}.neo-account-heading h2{font-size:36px}.neo-account-card{padding:19px}.neo-account-top{gap:11px}.neo-bank-icon{width:42px;height:42px}.neo-account-top b{font-size:14px}.neo-secure{font-size:6px;gap:4px}.neo-account-bottom{align-items:flex-start;flex-wrap:wrap;gap:13px}.neo-account-bottom>span{width:100%}.neo-account-bottom b{font-size:22px}.neo-account-bottom button{margin-left:auto}
+ .neo-verify-visual{height:185px}.neo-verify-layout{padding:55px 17px;grid-template-columns:1fr;gap:28px}.neo-verify-copy h2{font-size:47px}.neo-search-card{padding:26px 20px}
+ .neo-stats{padding:57px 16px}.neo-stats .neo-section-head h2{font-size:34px}.neo-stats-grid{grid-template-columns:repeat(2,1fr)}.neo-stats-grid>div{min-height:125px;padding:17px 13px}.neo-stats-grid>div:nth-child(2){border-right:0}.neo-stats-grid>div:nth-child(-n+2){border-bottom:1px solid #e1d8ca}
+ .neo-footer{padding:26px 17px;flex-wrap:wrap}.neo-footer p{order:3;width:100%;margin:0}.neo-footer>small{font-size:6px}
+}
+@media(max-width:370px){.neo-hero h1{font-size:58px}.neo-hero-actions{gap:12px}.neo-primary,.neo-secondary{font-size:6px}.neo-secure{display:none}.neo-account-top{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){.neo-site *, .neo-site *:before,.neo-site *:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
