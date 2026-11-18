@@ -1,0 +1,9 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+export default function AdminLogin() {
+  const [username,setUsername]=useState(""); const [password,setPassword]=useState(""); const [error,setError]=useState(""); const [busy,setBusy]=useState(false); const router=useRouter();
+  async function submit(e:React.FormEvent){e.preventDefault();setBusy(true);setError("");try{const r=await fetch("/api/admin/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username,password})});const d=await r.json();if(!r.ok)throw new Error(d.error);router.replace("/admin");}catch(err){setError(err instanceof Error?err.message:"Нэвтрэхэд алдаа гарлаа.");}finally{setBusy(false);}}
+  return <main style={{minHeight:"100vh",display:"grid",placeItems:"center",background:"#101d2a",padding:20}}><form onSubmit={submit} style={{width:"100%",maxWidth:420,background:"#f7f1e6",padding:36,border:"1px solid #d5ad62"}}><div style={{textAlign:"center",fontSize:12,letterSpacing:4,color:"#99743b",fontWeight:800}}>СҮХБААТАРЫН ХУРД</div><h1 style={{textAlign:"center",fontSize:28,color:"#172b38",margin:"14px 0 28px"}}>Админ нэвтрэх</h1><label style={{fontSize:12,fontWeight:700}}>НЭВТРЭХ НЭР</label><input required value={username} onChange={e=>setUsername(e.target.value)} style={field}/><label style={{fontSize:12,fontWeight:700}}>НУУЦ ҮГ</label><input required type="password" value={password} onChange={e=>setPassword(e.target.value)} style={field}/>{error&&<p style={{color:"#a34235",fontSize:13}}>{error}</p>}<button disabled={busy} style={{width:"100%",padding:15,background:"#172b38",color:"#f0d79f",border:0,fontWeight:800,marginTop:18}}>{busy?"ШАЛГАЖ БАЙНА...":"НЭВТРЭХ"}</button></form></main>;
+}
+const field:React.CSSProperties={display:"block",width:"100%",padding:13,margin:"8px 0 20px",border:"1px solid #d5c9b4",background:"white",color:"#172b38",outline:"none"};
