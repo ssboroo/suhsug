@@ -569,3 +569,38 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit}
  .home-v2-picker-bottom{align-items:flex-start;flex-direction:column;gap:4px}
  .home-v2-picker-bottom small{text-align:left}
 }
+
+
+/* 2026 HORSE COLLECTION — heraldic horse identity */
+.home-v2-collection-seal{
+  width:116px;height:116px;flex:none;position:relative;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:1px;color:#f1d79a;
+  border:1px solid #e6c77b80;border-radius:50%;
+  background:radial-gradient(circle at 50% 38%,#f0d79a20,#0a263a88 68%);
+  box-shadow:0 0 0 6px #e6c77b0c,0 14px 35px #0005,inset 0 0 24px #e6c77b12;
+  text-align:center;transform:rotate(5deg)
+}
+.home-v2-collection-seal:before,.home-v2-collection-seal:after{
+  content:"";position:absolute;top:50%;width:18px;height:1px;background:#e6c77b99
+}
+.home-v2-collection-seal:before{left:-24px}.home-v2-collection-seal:after{right:-24px}
+.home-v2-collection-seal svg{width:53px;height:53px;margin-top:3px;filter:drop-shadow(0 3px 8px #0008)}
+.home-v2-collection-seal>span{font-size:15px;font-weight:900;letter-spacing:.2em;line-height:1.1}
+.home-v2-collection-seal>small{font-size:6px;font-weight:900;letter-spacing:.13em;color:#d9c18c}
+.home-v2-horse-mark{
+  position:absolute;z-index:1;right:16px;top:14px;width:48px;height:48px;padding:8px;
+  color:#f5dfa9;border:1px solid #f1d79a99;border-radius:50%;
+  background:linear-gradient(145deg,#08273bd9,#07131bd9);
+  box-shadow:0 5px 18px #0007, inset 0 0 0 3px #f1d79a15
+}
+.home-v2-inspiration-photo b{max-width:80%;font-size:clamp(15px,2vw,22px);letter-spacing:.14em}
+.home-v2-inspiration-photo.photo-wind:after,.home-v2-inspiration-photo.photo-golden:after,.home-v2-inspiration-photo.photo-race:after{
+  background:linear-gradient(180deg,#06182755 0%,transparent 28%,#061827ed 100%)
+}
+@media(max-width:700px){
+ .home-v2-collection-seal{width:88px;height:88px}
+ .home-v2-collection-seal svg{width:39px;height:39px}
+ .home-v2-collection-seal>span{font-size:12px}
+ .home-v2-collection-seal>small{font-size:5px}
+ .home-v2-horse-mark{width:41px;height:41px;right:12px;top:12px}
+}
