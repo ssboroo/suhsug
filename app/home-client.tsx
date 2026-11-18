@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Award, ArrowDown, ArrowUpRight, CheckCircle2, ChevronRight, Search, ShieldCheck, Share2 } from "lucide-react";
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
-type PublicCampaign = { title: string; description: string; heroImageUrl: string | null };
+type PublicCampaign = { title: string; description: string; heroImageUrl: string | null; bankName: string | null; accountHolder: string | null; accountNumber: string | null; iban: string | null; facebookPageUrl: string | null };
 type PublicProgress = { percent: number };
 
 export default function HomePage() {
@@ -137,10 +137,40 @@ export default function HomePage() {
       </div>
     </section>
 
+    {(campaign?.bankName || campaign?.accountHolder || campaign?.accountNumber || campaign?.iban) && <section className="bank-info-section" id="bank-info">
+      <div className="bank-info-inner">
+        <div className="section-kicker"><span/> АЛБАН ЁСНЫ ТӨЛБӨРИЙН МЭДЭЭЛЭЛ</div>
+        <h2 className="section-title">Сугалаанд оролцох <em>данс</em></h2>
+        <p className="section-desc">Зөвхөн доорх зохион байгуулагчийн албан ёсны дансны мэдээллийг ашиглана уу.</p>
+        <div className="bank-info-card">
+          {campaign?.bankName && <div className="bank-info-row"><span>Банк</span><strong>{campaign.bankName}</strong></div>}
+          {campaign?.accountHolder && <div className="bank-info-row"><span>Данс эзэмшигч</span><strong>{campaign.accountHolder}</strong></div>}
+          {campaign?.accountNumber && <div className="bank-info-row"><span>Дансны дугаар</span><strong>{campaign.accountNumber}</strong></div>}
+          {campaign?.iban && <div className="bank-info-row"><span>IBAN</span><strong>{campaign.iban}</strong></div>}
+        </div>
+        <p className="bank-info-warning">Гүйлгээ хийхээсээ өмнө дансны мэдээллийг нягтална уу. Хувийн болон өөр хүний данс руу шилжүүлэг бүү хийгээрэй.</p>
+      </div>
+    </section>}
+
+    <section className="faq-section" id="faq">
+      <div className="section-inner">
+        <div className="section-kicker centered"><span/> ТУСЛАМЖ · МЭДЭЭЛЭЛ <span/></div>
+        <h2 className="section-title centered">Түгээмэл <em>асуулт, хариулт</em></h2>
+        <p className="section-desc centered">Сугалаанд оролцох болон эрхээ шалгахтай холбоотой мэдээлэл.</p>
+        <div className="faq-list">
+          <details className="faq-item"><summary>Сугалаанд хэрхэн оролцох вэ?</summary><p>Сугалааны зохион байгуулагчийн нийтэлсэн нөхцөл, зааврыг дагана уу. Төлбөр шилжүүлэх бол зөвхөн энэ хуудсанд нийтэлсэн албан ёсны дансны мэдээллийг ашиглаж, гүйлгээний утгыг зааврын дагуу бичнэ.</p></details>
+          <details className="faq-item"><summary>Сугалааны эрхээ хэрхэн шалгах вэ?</summary><p>“Сугалааны эрхээ шалгах” хэсэгт бүртгүүлсэн 8 оронтой утасны дугаараа оруулаад “Сугалаагаа шалгах” товчийг дарна. Бүртгэл олдвол гүйлгээний огноо болон эрхийн тоо харагдана.</p></details>
+          <details className="faq-item"><summary>Миний бүртгэл харагдахгүй байвал яах вэ?</summary><p>Утасны дугаараа зөв оруулсан эсэхээ шалгаад дахин хайна уу. Мөн гүйлгээ бүртгэгдэж, системд шинэчлэгдэх хугацаа шаардагдаж болно. Асуудал хэвээр байвал доорх Facebook хуудсаар холбогдоно уу.</p></details>
+          <details className="faq-item"><summary>Данс болон IBAN мэдээллийг хаанаас харах вэ?</summary><p>Энэ хэсэгт зөвхөн зохион байгуулагчийн нийтэлсэн сугалааны зориулалтын дансны мэдээлэл харагдана. Шилжүүлэг хийхийн өмнө данс эзэмшигчийн нэр, дугаарыг заавал тулгана уу.</p></details>
+          <details className="faq-item"><summary>Сугалааны талаар хаанаас лавлах вэ?</summary><p>Нүүр хуудасны доод хэсэгт байрлах албан ёсны Facebook Page холбоосоор холбогдоно уу.</p></details>
+        </div>
+      </div>
+    </section>
+
     <section className="closing-band"><div className="closing-ornament">ᠮ</div><p>МОНГОЛЫН ХИЙМОРЬ · ХУРДНЫ БАХАРХАЛ</p><h2>Хурдны өлзий дэлгэрэх болтугай</h2><a href="#search">ЭРХЭЭ ОДОО ШАЛГАХ <ArrowUpRight size={16}/></a></section>
 
     <footer className="footer">
-      <div className="footer-main"><div className="brand"><span className="brand-mark"><span>ᠮ</span></span><span className="brand-name"><strong>СҮХБААТАРЫН ХУРД</strong><small>СУГАЛААТ ХУДАЛДАА</small></span></div><p>Монгол өв соёл, хурдны хийморийг эрхэмлэн дээдэлье.</p><a href="#home">ДЭЭШ БУЦАХ ↑</a></div>
+      <div className="footer-main"><div className="brand"><span className="brand-mark"><span>ᠮ</span></span><span className="brand-name"><strong>СҮХБААТАРЫН ХУРД</strong><small>СУГАЛААТ ХУДАЛДАА</small></span></div><p>Монгол өв соёл, хурдны хийморийг эрхэмлэн дээдэлье.</p><div className="footer-actions">{campaign?.facebookPageUrl && <a href={campaign.facebookPageUrl} target="_blank" rel="noopener noreferrer">FACEBOOK PAGE ↗</a>}<a href="#home">ДЭЭШ БУЦАХ ↑</a></div></div>
       <div className="footer-bottom"><span>© {new Date().getFullYear()} Сүхбаатарын хурд. Бүх эрх хуулиар хамгаалагдсан.</span><span>МОНГОЛ УЛС</span></div>
     </footer>
   </main>;
