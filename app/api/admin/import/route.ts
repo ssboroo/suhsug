@@ -16,6 +16,17 @@ function dateValue(value: unknown): Date | null {
   const d = new Date(String(value ?? ""));
   return Number.isNaN(d.getTime()) ? null : d;
 }
+function parseCsvLine(line: string) {
+  const cells: string[] = []; let value = ""; let quoted = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"' && quoted && line[i + 1] === '"') { value += '"'; i++; }
+    else if (ch === '"') quoted = !quoted;
+    else if (ch === "," && !quoted) { cells.push(value.trim()); value = ""; }
+    else value += ch;
+  }
+  cells.push(value.trim()); return cells;
+}
 
 export async function GET() {
   if (!(await isAdmin())) return NextResponse.json({ error: "Нэвтрэх шаардлагатай." }, { status: 401 });
@@ -31,7 +42,7 @@ export async function POST(request: NextRequest) {
   const form = await request.formData();
   const file = form.get("file");
   const mode = String(form.get("mode") ?? "APPEND");
-  if (!(file instanceof File) || !/\.(xlsx|xls|csv)$/i.test(file.name)) return NextResponse.json({ error: "Excel эсвэл CSV файл сонгоно уу." }, { status: 400 });
+  if (!(file instanceof File) || !/\.(xlsx|csv)$/i.test(file.name)) return NextResponse.json({ error: "Зөвхөн .xlsx эсвэл .csv файл оруулна уу." }, { status: 400 });
   if (file.size > 12 * 1024 * 1024) return NextResponse.json({ error: "Файлын хэмжээ 12MB-аас бага байх ёстой." }, { status: 400 });
   if (!["APPEND", "REPLACE"].includes(mode)) return NextResponse.json({ error: "Импортын горим буруу байна." }, { status: 400 });
   const campaign = await db.campaign.findFirst({ where: { isActive: true } });
@@ -40,11 +51,9 @@ export async function POST(request: NextRequest) {
   const workbook = new ExcelJS.Workbook();
   const bytes = Buffer.from(await file.arrayBuffer());
   if (file.name.toLowerCase().endsWith(".csv")) {
-    const csv = bytes.toString("utf8");
-    const rows = csv.split(/\r?\n/).filter(Boolean).map(line => line.split(","));
-    rows.forEach((row, i) => { const sheetRow = (workbook.addWorksheet("CSV") as ExcelJS.Worksheet); void sheetRow; });
+    const csv = bytes.toString("utf8").replace(/^\uFEFF/, "");
     const sheet = workbook.addWorksheet("Импорт");
-    rows.forEach(row => sheet.addRow(row));
+    csv.split(/\r?\n/).filter(line => line.trim()).forEach(line => sheet.addRow(parseCsvLine(line)));
   } else {
     await workbook.xlsx.load(bytes);
   }
@@ -63,29 +72,27 @@ export async function POST(request: NextRequest) {
   const seen = new Set<string>();
   let duplicates = 0;
   for (let n = 2; n <= sheet.rowCount; n++) {
-    const row = sheet.getRow(n);
-    const vals = (row.values as unknown[]).slice(1);
+    const vals = (sheet.getRow(n).values as unknown[]).slice(1);
     if (vals.every(v => v == null || String(v).trim() === "")) continue;
     const phone = normalizePhone(vals[phoneIndex]);
     const date = dateValue(vals[dateIndex]);
     const count = Number(vals[countIndex]);
-    const transactionId = idIndex >= 0 ? String(vals[idIndex] ?? "").trim() : "row-" + n;
+    const transactionId = idIndex >= 0 ? String(vals[idIndex] ?? "").trim() : file.name + "-row-" + n;
     if (!phone || !date || !Number.isInteger(count) || count < 1 || !transactionId) {
       errors.push({ rowNumber: n, message: "Утасны дугаар, огноо, эрхийн тоо эсвэл гүйлгээний ID буруу." }); continue;
     }
-    const key = transactionId;
-    if (seen.has(key)) { duplicates++; continue; }
-    seen.add(key);
+    if (seen.has(transactionId)) { duplicates++; continue; }
+    seen.add(transactionId);
     valid.push({ transactionId, transactionDate: date, phoneNumber: phone, ticketCount: count });
   }
 
   const previous = mode === "REPLACE" ? await db.lotteryTransaction.findMany({ where: { campaignId: campaign.id }, select: { transactionId: true, transactionDate: true, phoneNumber: true, ticketCount: true } }) : [];
   const existingIds = mode === "APPEND" ? new Set((await db.lotteryTransaction.findMany({
-    where: { campaignId: campaign.id, transactionId: { in: valid.map(v => v.transactionId) } },
-    select: { transactionId: true }
+    where: { campaignId: campaign.id, transactionId: { in: valid.map(v => v.transactionId) } }, select: { transactionId: true }
   })).map(v => v.transactionId)) : new Set<string>();
   const fresh = valid.filter(v => !existingIds.has(v.transactionId));
   duplicates += valid.length - fresh.length;
+
   const batch = await db.$transaction(async tx => {
     const created = await tx.importBatch.create({ data: {
       campaignId: campaign.id, fileName: file.name, mode, status: "COMPLETED",
@@ -101,5 +108,5 @@ export async function POST(request: NextRequest) {
     await tx.adminAuditLog.create({ data: { action: "EXCEL_IMPORT", details: { fileName: file.name, mode, imported: fresh.length, rejected: errors.length } } });
     return created;
   });
-  return NextResponse.json({ ok: true, batchId: batch.id, imported: valid.length, rejected: errors.length, duplicates, errors: errors.slice(0, 30) });
+  return NextResponse.json({ ok: true, batchId: batch.id, imported: fresh.length, rejected: errors.length, duplicates, errors: errors.slice(0, 30) });
 }
