@@ -1,28 +1,30 @@
-import { describe, expect, it } from "vitest";
-import { parsePhoneCell } from "../lib/lottery-import";
+import test from "node:test";
+import assert from "node:assert/strict";
+import { countPhoneOccurrences, parsePhoneCell } from "../lib/lottery-import";
 
-describe("lottery occurrence phone parsing", () => {
-  it("accepts one valid 8 digit Mongolian phone", () => {
-    expect(parsePhoneCell("86050503").phone).toBe("86050503");
-  });
-  it("trims spaces and formatted phone numbers", () => {
-    expect(parsePhoneCell("  +976 860-505-03 ").phone).toBe("86050503");
-  });
-  it("extracts a single phone from text", () => {
-    expect(parsePhoneCell("Утас: 88512990").phone).toBe("88512990");
-  });
-  it("rejects empty cells", () => {
-    expect(parsePhoneCell("").reason).toBe("EMPTY");
-  });
-  it("rejects invalid numbers", () => {
-    expect(parsePhoneCell("12345678").phone).toBeNull();
-  });
-  it("does not guess when multiple numbers occur in one cell", () => {
-    expect(parsePhoneCell("86050503, 88512990").reason).toBe("MULTIPLE");
-  });
-  it("keeps each repeated occurrence as a separate row", () => {
-    const occurrences = ["86050503", "88512990", "88512990", "88512990", "99112233", "99112233"].map(parsePhoneCell);
-    expect(occurrences.filter(item => item.phone === "88512990")).toHaveLength(3);
-    expect(occurrences.filter(item => item.phone).length).toBe(6);
-  });
+test("one valid phone row creates one occurrence", () => {
+  const parsed = parsePhoneCell("86050503");
+  assert.equal(parsed.phone, "86050503");
+  assert.equal(countPhoneOccurrences([parsed.phone!]).get("86050503"), 1);
 });
+test("five rows with the same phone create five tickets", () => {
+  assert.equal(countPhoneOccurrences(Array(5).fill("88512990")).get("88512990"), 5);
+});
+test("one hundred repeated rows create one hundred tickets", () => {
+  assert.equal(countPhoneOccurrences(Array(100).fill("99112233")).get("99112233"), 100);
+});
+test("payment amount is not an input to occurrence counting", () => {
+  const rows = [{ phone: "86050503", amount: 1000 }, { phone: "86050503", amount: 500000 }];
+  assert.equal(countPhoneOccurrences(rows.map(row => row.phone)).get("86050503"), 2);
+});
+test("consecutive duplicate phone rows are preserved", () => {
+  assert.equal(countPhoneOccurrences(["86050503", "86050503"]).get("86050503"), 2);
+});
+test("non-consecutive duplicate phone rows are preserved", () => {
+  assert.equal(countPhoneOccurrences(["86050503", "88512990", "86050503"]).get("86050503"), 2);
+});
+test("empty phone is invalid", () => assert.equal(parsePhoneCell("").phone, null));
+test("invalid phone is rejected", () => assert.equal(parsePhoneCell("12345678").phone, null));
+test("spaces and country code are normalized", () => assert.equal(parsePhoneCell(" +976 860-505-03 ").phone, "86050503"));
+test("phone number embedded in text is extracted", () => assert.equal(parsePhoneCell("Холбоо барих: 99112233").phone, "99112233"));
+test("multiple phone numbers in one cell are not guessed", () => assert.equal(parsePhoneCell("86050503, 99112233").reason, "MULTIPLE"));
