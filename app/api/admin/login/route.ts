@@ -14,8 +14,10 @@ export async function POST(request: NextRequest) {
   const password = String(body.password ?? "").slice(0, 256);
   const expectedUser = process.env.ADMIN_USERNAME ?? "";
   const hash = process.env.ADMIN_PASSWORD_HASH ?? "";
-  const userOk = expectedUser.length > 0 && username.length === expectedUser.length &&
-    timingSafeEqual(Buffer.from(username), Buffer.from(expectedUser));
+  const providedUser = Buffer.from(username);
+  const configuredUser = Buffer.from(expectedUser);
+  const userOk = configuredUser.length > 0 && providedUser.length === configuredUser.length &&
+    timingSafeEqual(providedUser, configuredUser);
   const passOk = hash.startsWith("$2") ? await bcrypt.compare(password, hash) : false;
   if (!userOk || !passOk) return NextResponse.json({ error: "Нэвтрэх мэдээлэл буруу байна." }, { status: 401 });
   const response = NextResponse.json({ ok: true });
