@@ -13,7 +13,7 @@ type PublicCampaign = {
 };
 type PublicProgress = { percent: number };
 
-const defaultHorseImage = "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=2200&q=90";
+const defaultHorseImage = "https://commons.wikimedia.org/wiki/Special:FilePath/Herd_of_horses_in_Mongolia.jpg?width=2000";
 
 export default function HomePage() {
   const [phone, setPhone] = useState("");
