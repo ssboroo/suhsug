@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2, Facebook, Search, ShieldCheck, Sparkles, Trop
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
 type PublicCampaign = {
+  id: string;
   targetTicketCount: number | null;
   title: string; description: string; heroImageUrl: string | null; bankName: string | null; bankLogoUrl: string | null; accountHolder: string | null; accountNumber: string | null; iban: string | null; heroEyebrow: string | null;
   heroOverline: string | null; faqContent: string | null; stepsContent: string | null;
@@ -21,13 +22,14 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [campaign, setCampaign] = useState<PublicCampaign | null>(null);
+  const [campaigns, setCampaigns] = useState<{campaign:PublicCampaign;stats:{participants:number;tickets:number};progress:PublicProgress}[]>([]);
   const [progress, setProgress] = useState<PublicProgress | null>(null);
   const [stats, setStats] = useState<{participants:number;tickets:number}|null>(null);
 
   useEffect(() => {
     fetch("/api/campaign/public", { cache: "no-store" })
       .then(response => response.ok ? response.json() : null)
-      .then(data => { if (data?.campaign) setCampaign(data.campaign); if (data?.progress) setProgress(data.progress); if (data?.stats) setStats(data.stats); })
+      .then(data => { if (data?.campaigns?.length) { setCampaigns(data.campaigns); setCampaign(data.campaigns[0].campaign); setProgress(data.campaigns[0].progress); setStats(data.campaigns[0].stats); } else if (data?.campaign) { setCampaign(data.campaign); if (data?.progress) setProgress(data.progress); if (data?.stats) setStats(data.stats); } })
       .catch(() => undefined);
   }, []);
 
@@ -36,7 +38,7 @@ export default function HomePage() {
     if (!/^\d{8}$/.test(phone)) { setMessage("Утасны дугаар 8 оронтой байх шаардлагатай."); return; }
     setLoading(true); setMessage(""); setResult(null);
     try {
-      const response = await fetch("/api/search?phone=" + encodeURIComponent(phone), { cache: "no-store" });
+      const response = await fetch("/api/search?phone=" + encodeURIComponent(phone) + (campaign?.id ? "&campaignId=" + encodeURIComponent(campaign.id) : ""), { cache: "no-store" });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Хайлт хийхэд алдаа гарлаа.");
       setResult(data.records || []);
@@ -70,6 +72,13 @@ export default function HomePage() {
         <a className="home-v2-header-cta" href="#ticket-check"><Search size={15}/> ЭРХЭЭ ШАЛГАХ</a>
       </header>
 
+      {campaigns.length > 1 && <section className="home-v2-campaign-picker" aria-label="Явагдаж буй сугалаанууд">
+        <div className="home-v2-picker-heading"><span>АЗ ХИЙМОРИЙН БОЛОМЖУУД</span><strong>Явагдаж буй сугалаанууд</strong></div>
+        <div className="home-v2-picker-grid">{campaigns.map(item=><button type="button" key={item.campaign.id} onClick={()=>{setCampaign(item.campaign);setProgress(item.progress);setStats(item.stats);setResult(null);setMessage("");}} className={"home-v2-picker-card"+(campaign?.id===item.campaign.id?" selected":"")}>
+          <span className="home-v2-picker-image" style={{backgroundImage:item.campaign.heroImageUrl?'url("'+item.campaign.heroImageUrl+'")':"linear-gradient(135deg,#17313c,#52624e)"}}><i>ИДЭВХТЭЙ</i></span>
+          <span className="home-v2-picker-info"><strong>{item.campaign.title}</strong><small>{item.stats.tickets.toLocaleString("mn-MN")} эрх · {item.stats.participants.toLocaleString("mn-MN")} оролцогч</small><span className="home-v2-picker-track"><i style={{width:item.progress.percent+"%"}}/></span><em>{item.progress.percent}% дүүргэлт</em></span>
+        </button>)}</div>
+      </section>}
       <section className="home-v2-hero" id="home" style={heroStyle}>
         <div className="home-v2-shade"/>
         <div className="home-v2-inner">
