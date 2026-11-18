@@ -1,43 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import ExcelJS from "exceljs";
 import { isAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { dateFromCell, parsePhoneCell, readWorkbook, rowsForSheet, sha256 } from "@/lib/lottery-import";
 
+export const runtime = "nodejs";
 export const maxDuration = 60;
 const MAX_FILE_BYTES = 12 * 1024 * 1024;
 const MAX_ROWS = 50_000;
-
-function normalizePhone(value: unknown) {
-  const digits = String(value ?? "").replace(/\D/g, "");
-  return digits.length === 8 ? digits : "";
-}
-function dateValue(value: unknown): Date | null {
-  if (value instanceof Date && !Number.isNaN(value.getTime())) return value;
-  if (typeof value === "number") {
-    const d = new Date(Date.UTC(1899, 11, 30) + value * 86400000);
-    return Number.isNaN(d.getTime()) ? null : d;
-  }
-  const d = new Date(String(value ?? ""));
-  return Number.isNaN(d.getTime()) ? null : d;
-}
-function parseCsvLine(line: string) {
-  const cells: string[] = []; let value = ""; let quoted = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-    if (ch === '"' && quoted && line[i + 1] === '"') { value += '"'; i++; }
-    else if (ch === '"') quoted = !quoted;
-    else if (ch === "," && !quoted) { cells.push(value.trim()); value = ""; }
-    else value += ch;
-  }
-  cells.push(value.trim()); return cells;
-}
 
 export async function GET() {
   if (!(await isAdmin())) return NextResponse.json({ error: "Нэвтрэх шаардлагатай." }, { status: 401 });
   const campaign = await db.campaign.findFirst({ where: { isActive: true }, select: { id: true } });
   if (!campaign) return NextResponse.json({ imports: [] });
-  const imports = await db.importBatch.findMany({ where: { campaignId: campaign.id }, orderBy: { createdAt: "desc" }, take: 50,
-    select: { id: true, fileName: true, mode: true, status: true, totalRows: true, importedRows: true, rejectedRows: true, duplicateRows: true, createdAt: true } });
+  const imports = await db.importBatch.findMany({
+    where: { campaignId: campaign.id }, orderBy: { createdAt: "desc" }, take: 50,
+    select: { id: true, fileName: true, fileHash: true, sheetName: true, mode: true, status: true, totalRows: true, importedRows: true, rejectedRows: true, duplicateRows: true, createdAt: true }
+  });
   return NextResponse.json({ imports });
 }
 
@@ -45,93 +23,111 @@ export async function POST(request: NextRequest) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Нэвтрэх шаардлагатай." }, { status: 401 });
   const form = await request.formData();
   const file = form.get("file");
-  const mode = "APPEND"; // All new imports append; existing campaign data is never replaced.
-  if (!(file instanceof File) || !/\.(xlsx|csv)$/i.test(file.name)) return NextResponse.json({ error: "Зөвхөн .xlsx эсвэл .csv файл оруулна уу." }, { status: 400 });
-  if (file.size === 0 || file.size > MAX_FILE_BYTES) return NextResponse.json({ error: "Файлын хэмжээ 1 byte–12MB байх ёстой." }, { status: 400 });
+  const mode = String(form.get("mode") ?? "APPEND");
+  const sheetName = String(form.get("sheetName") ?? "");
+  const headerRow = Number(form.get("headerRow") ?? 1);
+  const startRow = Number(form.get("startRow") ?? headerRow + 1);
+  const phoneColumn = Number(form.get("phoneColumn") ?? 0);
+  if (!(file instanceof File) || !/\.(xlsx|xls)$/i.test(file.name)) return NextResponse.json({ error: "Зөвхөн .xlsx болон .xls файл оруулна уу." }, { status: 400 });
+  if (!file.size || file.size > MAX_FILE_BYTES) return NextResponse.json({ error: "Файлын хэмжээ 1 byte–12MB байх ёстой." }, { status: 400 });
   if (!["APPEND", "REPLACE"].includes(mode)) return NextResponse.json({ error: "Импортын горим буруу байна." }, { status: 400 });
-  const campaign = await db.campaign.findFirst({ where: { isActive: true } });
+  if (!sheetName || !Number.isInteger(headerRow) || headerRow < 1 || !Number.isInteger(startRow) || startRow <= headerRow || !Number.isInteger(phoneColumn) || phoneColumn < 1 || phoneColumn > 200) {
+    return NextResponse.json({ error: "Sheet, толгой мөр, өгөгдлийн эхлэх мөр болон утасны баганаа зөв сонгоно уу." }, { status: 400 });
+  }
+  const campaign = await db.campaign.findFirst({ where: { isActive: true }, select: { id: true } });
   if (!campaign) return NextResponse.json({ error: "Эхлээд идэвхтэй сугалаа үүсгэнэ үү." }, { status: 400 });
 
-  const workbook = new ExcelJS.Workbook();
-  const bytes = Buffer.from(await file.arrayBuffer());
-  if (file.name.toLowerCase().endsWith(".csv")) {
-    const csv = bytes.toString("utf8").replace(/^\uFEFF/, "");
-    const sheet = workbook.addWorksheet("Импорт");
-    csv.split(/\r?\n/).filter(line => line.trim()).forEach(line => sheet.addRow(parseCsvLine(line)));
-  } else {
-    await workbook.xlsx.load(bytes);
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const fileHash = sha256(buffer);
+  let rows: unknown[][];
+  try {
+    const workbook = readWorkbook(buffer);
+    rows = rowsForSheet(workbook, sheetName);
+  } catch {
+    return NextResponse.json({ error: "Сонгосон sheet-ийг уншиж чадсангүй." }, { status: 400 });
   }
-  const sheet = workbook.worksheets[0];
-  if (!sheet || sheet.rowCount < 2) return NextResponse.json({ error: "Файлд импортлох мөр олдсонгүй." }, { status: 400 });
-  if (sheet.rowCount - 1 > MAX_ROWS) return NextResponse.json({ error: "Нэг импортод 50,000-аас их мөр оруулах боломжгүй." }, { status: 400 });
+  if (rows.length < startRow) return NextResponse.json({ error: "Өгөгдлийн эхлэх мөрөөс хойш мэдээлэл алга." }, { status: 400 });
+  if (rows.length - startRow + 1 > MAX_ROWS) return NextResponse.json({ error: "Нэг sheet-д 50,000-аас их мөр оруулах боломжгүй." }, { status: 400 });
 
-  const headers = (sheet.getRow(1).values as unknown[]).slice(1).map(v => String(v ?? "").trim().toLowerCase());
-  const find = (names: string[]) => headers.findIndex(h => names.includes(h));
-  const dateIndex = find(["transaction_date","date","огноо","гүйлгээний огноо"]);
-  const phoneIndex = find(["phone_number","phone","утас","утасны дугаар"]);
-  const countIndex = find(["ticket_count","tickets","сугалааны эрх","эрхийн тоо"]);
-  const idIndex = find(["transaction_id","id","гүйлгээний дугаар","гүйлгээний утга"]);
-  if ([dateIndex, phoneIndex, countIndex, idIndex].some(i => i < 0)) return NextResponse.json({
-    error: "Дараах баганууд заавал шаардлагатай: transaction_id, transaction_date, phone_number, ticket_count."
-  }, { status: 400 });
+  const headerValues = rows[headerRow - 1] ?? [];
+  const dateColumn = headerValues.findIndex(value => /date|огноо/i.test(String(value ?? ""))) + 1;
+  const valid: { transactionId: string; transactionDate: Date; phoneNumber: string; ticketCount: 1; sourceFileHash: string; sourceSheet: string; sourceRow: number }[] = [];
+  const errors: { rowNumber: number; message: string; rawData: object }[] = [];
+  let totalRows = 0;
+  let duplicatePhoneRows = 0;
+  const seenPhones = new Set<string>();
 
-  const valid: { transactionId: string; transactionDate: Date; phoneNumber: string; ticketCount: number }[] = [];
-  const errors: { rowNumber: number; message: string }[] = [];
-  const seen = new Set<string>();
-  let duplicates = 0;
-  for (let n = 2; n <= sheet.rowCount; n++) {
-    const vals = (sheet.getRow(n).values as unknown[]).slice(1);
-    if (vals.every(v => v == null || String(v).trim() === "")) continue;
-    const phone = normalizePhone(vals[phoneIndex]);
-    const date = dateValue(vals[dateIndex]);
-    const count = Number(vals[countIndex]);
-    const transactionId = String(vals[idIndex] ?? "").trim().slice(0, 160);
-    if (!phone || !date || !Number.isInteger(count) || count < 1 || count > 1_000_000 || !transactionId) {
-      errors.push({ rowNumber: n, message: "Гүйлгээний ID, 8 оронтой утас, огноо эсвэл эрхийн тоо буруу." }); continue;
+  for (let index = startRow - 1; index < rows.length; index++) {
+    const row = rows[index] ?? [];
+    if (row.every(value => value === null || value === undefined || String(value).trim() === "")) continue;
+    totalRows++;
+    const parsed = parsePhoneCell(row[phoneColumn - 1]);
+    if (!parsed.phone) {
+      const message = parsed.reason === "EMPTY" ? "Утасны дугаар хоосон." : parsed.reason === "MULTIPLE" ? "Нэг нүдэнд олон утасны дугаар байна. Гараар шалгана уу." : "8 оронтой хүчинтэй утасны дугаар биш.";
+      errors.push({ rowNumber: index + 1, message, rawData: { values: row.map(value => String(value ?? "").slice(0, 500)) } });
+      continue;
     }
-    if (seen.has(transactionId)) { duplicates++; continue; }
-    seen.add(transactionId);
-    valid.push({ transactionId, transactionDate: date, phoneNumber: phone, ticketCount: count });
+    if (seenPhones.has(parsed.phone)) duplicatePhoneRows++;
+    seenPhones.add(parsed.phone);
+    const transactionId = "row_" + fileHash.slice(0, 24) + "_" + Buffer.from(sheetName).toString("base64url").slice(0, 20) + "_" + (index + 1);
+    valid.push({
+      transactionId,
+      transactionDate: dateColumn > 0 ? dateFromCell(row[dateColumn - 1]) : new Date(),
+      phoneNumber: parsed.phone,
+      ticketCount: 1,
+      sourceFileHash: fileHash,
+      sourceSheet: sheetName,
+      sourceRow: index + 1
+    });
   }
 
-  if (valid.length === 0) return NextResponse.json({ error: "Импортлох хүчинтэй мөр алга.", rejected: errors.length }, { status: 400 });
-  if (mode === "REPLACE" && errors.length > 0) return NextResponse.json({
-    error: "REPLACE горимд алдаатай мөртэй файлыг зөвшөөрөхгүй. Excel-ээ засаж дахин оруулна уу.",
-    rejected: errors.length, errors: errors.slice(0, 30)
-  }, { status: 400 });
+  if (!totalRows) return NextResponse.json({ error: "Сонгосон мужид өгөгдөл алга." }, { status: 400 });
+  if (!valid.length) return NextResponse.json({ error: "Хүчинтэй утасны дугаар олдсонгүй.", totalRows, rejected: errors.length, errors: errors.slice(0, 100) }, { status: 400 });
 
-  const result = await db.$transaction(async tx => {
-    // Serialize imports for this campaign so concurrent APPEND/REPLACE requests cannot race.
-    await tx.$queryRaw`SELECT "id" FROM "Campaign" WHERE "id" = ${campaign.id} FOR UPDATE`;
-    const previous = mode === "REPLACE" ? await tx.lotteryTransaction.findMany({
-      where: { campaignId: campaign.id },
-      select: { transactionId: true, transactionDate: true, phoneNumber: true, ticketCount: true }
-    }) : [];
-    const existingIds = mode === "APPEND" ? new Set((await tx.lotteryTransaction.findMany({
-      where: { campaignId: campaign.id, transactionId: { in: valid.map(v => v.transactionId) } },
-      select: { transactionId: true }
-    })).map(v => v.transactionId)) : new Set<string>();
-    const fresh = valid.filter(v => !existingIds.has(v.transactionId));
-    const duplicateCount = duplicates + valid.length - fresh.length;
-    if (fresh.length === 0) return { noNewRows: true as const, duplicates: duplicateCount };
+  try {
+    const result = await db.$transaction(async tx => {
+      await tx.$queryRaw`SELECT "id" FROM "Campaign" WHERE "id" = ${campaign.id} FOR UPDATE`;
+      const previousBatch = await tx.importBatch.findFirst({
+        where: { campaignId: campaign.id, fileHash, sheetName, status: { not: "ROLLED_BACK" } },
+        select: { id: true }
+      });
+      if (previousBatch) throw new Error("FILE_ALREADY_IMPORTED");
 
-    const created = await tx.importBatch.create({ data: {
-      campaignId: campaign.id, fileName: file.name, mode, status: "COMPLETED",
-      totalRows: Math.max(0, sheet.rowCount - 1), importedRows: fresh.length, rejectedRows: errors.length, duplicateRows: duplicateCount,
-      snapshot: mode === "REPLACE" ? previous.map(p => ({ ...p, transactionDate: p.transactionDate.toISOString() })) : undefined
-    }});
-    if (mode === "REPLACE") await tx.lotteryTransaction.deleteMany({ where: { campaignId: campaign.id } });
-    await tx.lotteryTransaction.createMany({
-      data: fresh.map(item => ({ ...item, campaignId: campaign.id, importBatchId: created.id })),
-      skipDuplicates: true
+      const previous = mode === "REPLACE" ? await tx.lotteryTransaction.findMany({
+        where: { campaignId: campaign.id },
+        select: { transactionId: true, transactionDate: true, phoneNumber: true, ticketCount: true, sourceFileHash: true, sourceSheet: true, sourceRow: true, importBatchId: true }
+      }) : [];
+      const batch = await tx.importBatch.create({ data: {
+        campaignId: campaign.id, fileName: file.name, fileHash, sheetName, mode, status: "COMPLETED",
+        totalRows, importedRows: valid.length, rejectedRows: errors.length, duplicateRows: 0,
+        snapshot: mode === "REPLACE" ? previous.map(row => ({ ...row, transactionDate: row.transactionDate.toISOString() })) : undefined
+      }});
+      if (mode === "REPLACE") await tx.lotteryTransaction.deleteMany({ where: { campaignId: campaign.id } });
+      await tx.lotteryTransaction.createMany({
+        data: valid.map(row => ({ ...row, campaignId: campaign.id, importBatchId: batch.id })),
+        skipDuplicates: false
+      });
+      if (errors.length) await tx.importError.createMany({ data: errors.map(error => ({ batchId: batch.id, ...error })) });
+      await tx.adminAuditLog.create({ data: {
+        action: "EXCEL_IMPORT",
+        details: { batchId: batch.id, fileName: file.name, fileHash, sheetName, mode, totalRows, imported: valid.length, rejected: errors.length, duplicatePhoneRows }
+      }});
+      const [ticketTotal, participantTotal] = await Promise.all([
+        tx.lotteryTransaction.count({ where: { campaignId: campaign.id } }),
+        tx.lotteryTransaction.findMany({ where: { campaignId: campaign.id }, distinct: ["phoneNumber"], select: { phoneNumber: true } })
+      ]);
+      return { batchId: batch.id, tickets: ticketTotal, participants: participantTotal.length };
+    }, { isolationLevel: "Serializable", timeout: 60_000 });
+
+    return NextResponse.json({
+      ok: true, batchId: result.batchId, mode, totalRows, imported: valid.length, rejected: errors.length,
+      duplicatePhoneRows, totalTickets: result.tickets, totalParticipants: result.participants,
+      errors: errors.slice(0, 100)
     });
-    if (errors.length) await tx.importError.createMany({ data: errors.map(e => ({ batchId: created.id, ...e })) });
-    await tx.adminAuditLog.create({ data: { action: "EXCEL_IMPORT", details: { fileName: file.name, mode, imported: fresh.length, rejected: errors.length } } });
-    return { noNewRows: false as const, batchId: created.id, imported: fresh.length, duplicates: duplicateCount };
-  }, { isolationLevel: "Serializable", timeout: 60_000 });
-
-  if (result.noNewRows) return NextResponse.json({
-    error: "Шинэ гүйлгээ алга. Бүх мөр өмнө нь импортлогдсон байна.", duplicates: result.duplicates
-  }, { status: 409 });
-  return NextResponse.json({ ok: true, batchId: result.batchId, imported: result.imported, rejected: errors.length, duplicates: result.duplicates, errors: errors.slice(0, 30) });
+  } catch (error) {
+    if (error instanceof Error && error.message === "FILE_ALREADY_IMPORTED") {
+      return NextResponse.json({ error: "Энэ Excel файл болон sheet өмнө нь амжилттай импортлогдсон байна. Давхар эрх үүсгэхээс хамгаалж зогсоолоо." }, { status: 409 });
+    }
+    return NextResponse.json({ error: "Импорт амжилтгүй. Өгөгдлийн сангийн өөрчлөлтийг бүхэлд нь буцаалаа." }, { status: 500 });
+  }
 }
