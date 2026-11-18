@@ -11,6 +11,7 @@
 - `/admin/login` — админ нэвтрэх.
 - Нийт оролцогч (давхардалгүй утасны дугаар) болон нийт сугалааны эрхийн тоо.
 - Facebook share action — зөвхөн админд харагдана. Open Graph preview ашиглана.
+- Сугалааны нэр, тайлбар, нийтлэх төлөв болон нүүр зургийн HTTPS холбоосыг админаас өөрчилнө.
 - Excel импортын түүх, амжилттай/алдаатай мөрийн тоо.
 - APPEND импортын rollback нь тухайн batch-аас нэмсэн мөрүүдийг буцаана.
 - REPLACE импортын rollback нь өмнөх snapshot-ийг сэргээнэ.
@@ -62,8 +63,8 @@ GitHub Actions нь push болон pull request бүрт PostgreSQL service д�
 
 ## Одоогоор үлдсэн production ажил
 - Бодит hosting, домэйн, PostgreSQL, Upstash Redis credentials тохируулах.
-- Object storage (S3/R2 зэрэг) холбож админаас зураг upload хийх.
-- Админд сугалааны мэдээлэл засах UI болон Excel баганын визуал mapping нэмэх.
+- Object storage (S3/R2 зэрэг) холбож админаас зураг шууд upload хийх; одоогоор админ HTTPS зургийн холбоос оруулна.
+- Excel баганын визуал mapping нэмэх.
 - Бодит Excel файлууд болон олон хэрэглэгчийн ачааллын тест хийх.
 - Facebook Open Graph зурагт өөрийн эрхтэй зураг ашиглах.
 
