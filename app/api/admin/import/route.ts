@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
   const headerValues = rows[headerRow - 1] ?? [];
   const dateColumn = headerValues.findIndex(value => /date|огноо/i.test(String(value ?? ""))) + 1;
   const valid: { transactionId: string; transactionDate: Date; phoneNumber: string; ticketCount: 1; sourceFileHash: string; sourceSheet: string; sourceRow: number }[] = [];
-  const errors: { rowNumber: number; message: string; rawData: object }[] = [];
+  const errors: { rowNumber: number; message: string; rawData: { values: string[] } }[] = [];
   let totalRows = 0;
   let duplicatePhoneRows = 0;
   const seenPhones = new Set<string>();
