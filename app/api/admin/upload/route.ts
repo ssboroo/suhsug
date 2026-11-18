@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
   let publicBase: URL;
   try {
     publicBase = new URL(publicBaseUrl);
-    if (publicBase.protocol !== "https:") throw new Error("HTTPS required");
+    if (publicBase.protocol !== "https:" || publicBase.username || publicBase.password || publicBase.search || publicBase.hash) throw new Error("HTTPS public base URL required");
   } catch {
     return NextResponse.json({ error: "S3_PUBLIC_BASE_URL нь хүчинтэй HTTPS URL байх ёстой." }, { status: 503 });
   }
