@@ -7,6 +7,8 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
   const { id } = await context.params;
   const batch = await db.importBatch.findUnique({ where: { id } });
   if (!batch || batch.status === "ROLLED_BACK") return NextResponse.json({ error: "Импорт олдсонгүй эсвэл өмнө нь сэргээсэн байна." }, { status: 400 });
+  const latest = await db.importBatch.findFirst({ where: { campaignId: batch.campaignId }, orderBy: { createdAt: "desc" }, select: { id: true } });
+  if (latest?.id !== batch.id) return NextResponse.json({ error: "Зөвхөн хамгийн сүүлийн Excel импортыг буцаах боломжтой." }, { status: 409 });
   await db.$transaction(async tx => {
     if (batch.mode === "REPLACE") {
       if (!Array.isArray(batch.snapshot)) throw new Error("Нөөц хуулбар байхгүй байна.");
