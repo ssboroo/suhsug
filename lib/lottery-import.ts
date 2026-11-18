@@ -25,17 +25,15 @@ export function inspectWorkbook(workbook: XLSX.WorkBook): SheetPreview[] {
 export function parsePhoneCell(value: unknown): PhoneParse {
   if (value === null || value === undefined || String(value).trim() === "") return { phone: null, reason: "EMPTY" };
   const input = String(value).trim();
-  const pattern = /(?<!\d)(?:\+?976[\s().-]*)?([6-9](?:[\s().-]*\d){7})(?!\d)/g;
+  const pattern = /(?<!\d)(?:\+?976[\s().-]*)?([5-9](?:[\s().-]*\d){7})(?!\d)/g;
   const matches = [...input.matchAll(pattern)].map(match => match[1].replace(/\D/g, ""));
-  const unique = [...new Set(matches)];
-  if (unique.length > 1) return { phone: null, reason: "MULTIPLE" };
-  if (unique.length === 1 && /^[6-9]\d{7}$/.test(unique[0])) return { phone: unique[0], reason: "INVALID" };
+  if (matches.length > 1) return { phone: null, reason: "MULTIPLE" };
+  if (matches.length === 1 && /^[5-9]\d{7}$/.test(matches[0])) return { phone: matches[0], reason: "OK" };
   const digits = input.replace(/\D/g, "");
   const normalized = digits.startsWith("976") && digits.length === 11 ? digits.slice(3) : digits;
-  if (/^[6-9]\d{7}$/.test(normalized)) return { phone: normalized, reason: "INVALID" };
+  if (/^[5-9]\d{7}$/.test(normalized)) return { phone: normalized, reason: "OK" };
   return { phone: null, reason: "INVALID" };
 }
-
 export function dateFromCell(value: unknown): Date {
   if (value instanceof Date && !Number.isNaN(value.getTime())) return value;
   if (typeof value === "number") {
