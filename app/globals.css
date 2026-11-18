@@ -230,3 +230,29 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit}
 .home-v2-stats>div small{font-size:8px;color:#c5c9c0;font-weight:800;letter-spacing:.13em}
 .home-v2-stats>span{height:27px;width:1px;background:#ffffff2b}
 @media(max-width:700px){.home-v2-bank{margin-top:14px;padding:12px}.home-v2-account strong{font-size:15px}.home-v2-stats>div strong{font-size:18px}}
+
+/* SUHSUG live lottery showcase */
+.home-v2-emblem{overflow:hidden;position:relative;color:#f0d69e}
+.home-v2-emblem svg{width:29px;height:29px;filter:drop-shadow(0 2px 5px #0005)}
+.home-v2-emblem:after{content:"";position:absolute;inset:4px;border:1px solid #cba45e45;border-radius:50%;pointer-events:none}
+.home-v2-live-card{max-width:520px;margin-top:20px;padding:19px 20px 15px;border:1px solid #d7b36a66;background:linear-gradient(135deg,#0b2029ed,#102b34e8);box-shadow:0 16px 45px #0003;backdrop-filter:blur(12px);position:relative;overflow:hidden}
+.home-v2-live-card:before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,#e5c47e,#9b7337,transparent)}
+.home-v2-live-head{display:flex;align-items:center;gap:11px}
+.home-v2-live-symbol{width:37px;height:37px;display:grid;place-items:center;border:1px solid #d2ae6866;border-radius:50%;background:#cba45e17;color:#f0d69e;flex:none}
+.home-v2-live-head>span:nth-child(2){display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.home-v2-live-head>span:nth-child(2) small{font-size:8px;font-weight:900;letter-spacing:.16em;color:#e4c783}
+.home-v2-live-head>span:nth-child(2) strong{font-size:13px;color:#fff4dd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-v2-live-badge{display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid #6b9b7755;background:#53876518;color:#b9d7bd;font-size:8px;font-weight:900;letter-spacing:.08em;white-space:nowrap}
+.home-v2-live-badge i{width:6px;height:6px;border-radius:50%;background:#82c18d;box-shadow:0 0 0 3px #82c18d22;animation:lotteryPulse 1.8s infinite}
+.home-v2-live-numbers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:18px 0 15px}
+.home-v2-live-numbers>div{display:flex;flex-direction:column;gap:5px;padding:10px 9px;background:#ffffff08;border:1px solid #ffffff12;min-width:0}
+.home-v2-live-numbers strong{font-size:clamp(17px,2vw,23px);line-height:1.1;color:#f0d69e;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.home-v2-live-numbers small{font-size:7px;line-height:1.45;color:#bdc9c3;font-weight:800;letter-spacing:.06em}
+.home-v2-live-track{height:7px;background:#ffffff18;border-radius:10px;overflow:hidden}
+.home-v2-live-track span{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,#98703a,#e6c57e);box-shadow:0 0 14px #d4ad5c77;transition:width .6s ease}
+.home-v2-live-foot{display:flex;justify-content:space-between;gap:12px;margin-top:9px;color:#c6d0c9;font-size:9px}
+.home-v2-live-foot strong{color:#f0d69e}
+.home-v2-live-card>p{margin:12px 0 0;padding-top:10px;border-top:1px solid #ffffff13;color:#98aaa2;font-size:8px;line-height:1.6}
+@keyframes lotteryPulse{0%,100%{box-shadow:0 0 0 3px #82c18d22}50%{box-shadow:0 0 0 6px #82c18d08}}
+@media(max-width:700px){.home-v2-live-card{margin-top:16px;padding:16px 14px}.home-v2-live-numbers{gap:6px;margin:14px 0 12px}.home-v2-live-numbers>div{padding:9px 7px}.home-v2-live-numbers small{font-size:6px}.home-v2-live-foot{font-size:8px}.home-v2-live-head>span:nth-child(2) strong{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.home-v2-live-badge i{animation:none}}
