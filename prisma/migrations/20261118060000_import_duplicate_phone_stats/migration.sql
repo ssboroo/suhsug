@@ -1,0 +1,1 @@
+ALTER TABLE "ImportBatch" ADD COLUMN "duplicatePhoneRows" INTEGER NOT NULL DEFAULT 0;
