@@ -27,10 +27,29 @@ export default function HomePage() {
   const [stats, setStats] = useState<{participants:number;tickets:number}|null>(null);
 
   useEffect(() => {
-    fetch("/api/campaign/public", { cache: "no-store" })
-      .then(response => response.ok ? response.json() : null)
-      .then(data => { if (data?.campaigns?.length) { setCampaigns(data.campaigns); setCampaign(data.campaigns[0].campaign); setProgress(data.campaigns[0].progress); setStats(data.campaigns[0].stats); } else if (data?.campaign) { setCampaign(data.campaign); if (data?.progress) setProgress(data.progress); if (data?.stats) setStats(data.stats); } })
-      .catch(() => undefined);
+    let active = true;
+    const refreshCampaigns = async () => {
+      try {
+        const response = await fetch("/api/campaign/public", { cache: "no-store" });
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!active || !data?.campaigns) return;
+        const nextCampaigns = data.campaigns as typeof campaigns;
+        setCampaigns(nextCampaigns);
+        setCampaign(previous => {
+          const selected = nextCampaigns.find(item => item.campaign.id === previous?.id) || nextCampaigns[0];
+          if (selected) {
+            setProgress(selected.progress);
+            setStats(selected.stats);
+            return selected.campaign;
+          }
+          return previous;
+        });
+      } catch { /* Keep the last successfully loaded public figures visible. */ }
+    };
+    refreshCampaigns();
+    const interval = window.setInterval(refreshCampaigns, 30000);
+    return () => { active = false; window.clearInterval(interval); };
   }, []);
 
   async function searchPhone(e: React.FormEvent<HTMLFormElement>) {
@@ -72,11 +91,20 @@ export default function HomePage() {
         <a className="home-v2-header-cta" href="#ticket-check"><Search size={15}/> ЭРХЭЭ ШАЛГАХ</a>
       </header>
 
-      {campaigns.length > 1 && <section className="home-v2-campaign-picker" aria-label="Явагдаж буй сугалаанууд">
-        <div className="home-v2-picker-heading"><span>АЗ ХИЙМОРИЙН БОЛОМЖУУД</span><strong>Явагдаж буй сугалаанууд</strong></div>
-        <div className="home-v2-picker-grid">{campaigns.map(item=><button type="button" key={item.campaign.id} onClick={()=>{setCampaign(item.campaign);setProgress(item.progress);setStats(item.stats);setResult(null);setMessage("");}} className={"home-v2-picker-card"+(campaign?.id===item.campaign.id?" selected":"")}>
-          <span className="home-v2-picker-image" style={{backgroundImage:item.campaign.heroImageUrl?'url("'+item.campaign.heroImageUrl+'")':"linear-gradient(135deg,#17313c,#52624e)"}}><i>ИДЭВХТЭЙ</i></span>
-          <span className="home-v2-picker-info"><strong>{item.campaign.title}</strong><small>{item.stats.tickets.toLocaleString("mn-MN")} эрх · {item.stats.participants.toLocaleString("mn-MN")} оролцогч</small><span className="home-v2-picker-track"><i style={{width:item.progress.percent+"%"}}/></span><em>{item.progress.percent}% дүүргэлт</em></span>
+      {campaigns.length > 0 && <section className="home-v2-campaign-picker" aria-label="Явагдаж буй сугалаанууд">
+        <div className="home-v2-picker-heading"><span>АЗ ХИЙМОРИЙН БОЛОМЖУУД · LIVE</span><strong>Явагдаж буй сугалаанууд</strong><p>Оролцогчдын тоо болон сугалааны эрхийн явц автоматаар шинэчлэгдэнэ</p></div>
+        <div className="home-v2-picker-grid">{campaigns.map((item,index)=><button type="button" key={item.campaign.id} onClick={()=>{setCampaign(item.campaign);setProgress(item.progress);setStats(item.stats);setResult(null);setMessage("");}} className={"home-v2-picker-card"+(campaign?.id===item.campaign.id?" selected":"")}>
+          <span className="home-v2-picker-image" style={{backgroundImage:'url("'+(item.campaign.heroImageUrl || defaultHorseImage)+'")'}}><i>ИДЭВХТЭЙ</i><b>{String(index+1).padStart(2,"0")}</b></span>
+          <span className="home-v2-picker-info">
+            <strong>{item.campaign.title}</strong>
+            <span className="home-v2-picker-metrics">
+              <span><b>{item.stats.participants.toLocaleString("mn-MN")}</b><small>ОРОЛЦОГЧ</small></span>
+              <span><b>{item.stats.tickets.toLocaleString("mn-MN")}</b><small>ЗАРАГДСАН ЭРХ</small></span>
+              <span><b>{item.progress.target ? item.progress.target.toLocaleString("mn-MN") : "—"}</b><small>НИЙТ ЭРХ</small></span>
+            </span>
+            <span className="home-v2-picker-track"><i style={{width:item.progress.percent+"%"}}/></span>
+            <span className="home-v2-picker-bottom"><em>{item.progress.percent}% дүүргэлт</em><small>{item.progress.remaining !== null ? item.progress.remaining.toLocaleString("mn-MN")+" эрх үлдсэн" : "Зорилтот эрх тохируулаагүй"}</small></span>
+          </span>
         </button>)}</div>
       </section>}
       <section className="home-v2-hero" id="home" style={heroStyle}>
