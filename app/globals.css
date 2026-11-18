@@ -256,3 +256,23 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit}
 @keyframes lotteryPulse{0%,100%{box-shadow:0 0 0 3px #82c18d22}50%{box-shadow:0 0 0 6px #82c18d08}}
 @media(max-width:700px){.home-v2-live-card{margin-top:16px;padding:16px 14px}.home-v2-live-numbers{gap:6px;margin:14px 0 12px}.home-v2-live-numbers>div{padding:9px 7px}.home-v2-live-numbers small{font-size:6px}.home-v2-live-foot{font-size:8px}.home-v2-live-head>span:nth-child(2) strong{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.home-v2-live-badge i{animation:none}}
+
+/* Multi-campaign public showcase */
+.home-v2-campaign-picker{position:relative;z-index:1;padding:28px max(22px,calc((100% - 1240px)/2));background:linear-gradient(180deg,#0a1922,#102630);border-bottom:1px solid #cba45e45}
+.home-v2-picker-heading{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.home-v2-picker-heading span{font-size:8px;color:#d9b975;font-weight:900;letter-spacing:.22em}
+.home-v2-picker-heading strong{font-size:19px;color:#fff2d7}
+.home-v2-picker-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:12px}
+.home-v2-picker-card{display:flex;min-width:0;text-align:left;padding:0;overflow:hidden;border:1px solid #ffffff20;background:#142d37;color:#fff;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
+.home-v2-picker-card:hover{transform:translateY(-2px);border-color:#cba45e99}
+.home-v2-picker-card.selected{border-color:#e2c17e;box-shadow:0 0 0 1px #e2c17e55,0 10px 28px #0003}
+.home-v2-picker-image{width:94px;min-height:116px;flex:none;background-size:cover;background-position:center;position:relative}
+.home-v2-picker-image:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#06131c66,transparent)}
+.home-v2-picker-image i{position:absolute;z-index:1;left:6px;bottom:7px;font-size:6px;font-style:normal;font-weight:900;letter-spacing:.07em;color:#f5d999}
+.home-v2-picker-info{display:flex;flex-direction:column;justify-content:center;gap:7px;min-width:0;flex:1;padding:12px}
+.home-v2-picker-info strong{font-size:11px;line-height:1.45;color:#fff1d5}
+.home-v2-picker-info small{font-size:8px;color:#bac8c0}
+.home-v2-picker-track{height:5px;background:#ffffff20;border-radius:8px;overflow:hidden}
+.home-v2-picker-track i{display:block;height:100%;background:linear-gradient(90deg,#9b7339,#e8ca87)}
+.home-v2-picker-info em{font-size:8px;color:#e4c783;font-style:normal}
+@media(max-width:700px){.home-v2-campaign-picker{padding:23px 17px}.home-v2-picker-heading strong{font-size:16px}.home-v2-picker-grid{grid-template-columns:1fr;gap:9px}.home-v2-picker-card{min-height:100px}.home-v2-picker-image{width:86px;min-height:100px}}
