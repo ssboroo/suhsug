@@ -187,24 +187,14 @@ export default function HomePage() {
         <div className="home-v2-bottom-mark"><span/> ХУРД · ХИЙМОРЬ · БАХАРХАЛ <span/></div>
       </section>
 
-      <section className="home-v2-inspiration" aria-labelledby="inspiration-title">
+      <section className="home-v2-inspiration home-v2-how" aria-labelledby="inspiration-title">
         <div className="home-v2-inspiration-head">
-          <div><span className="home-v2-section-kicker">МОНГОЛ ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ</span><h2 id="inspiration-title">Сугалааны <em>загварууд</em></h2><p>Дараах нь нэр, зураг, өнгө төрхийн жишээ загварууд юм. Бодит сугалаа биш.</p></div>
-          
+          <div><span className="home-v2-section-kicker">ШУУРХАЙ · ХЯЛБАР · НАЙДВАРТАЙ</span><h2 id="inspiration-title">Эрхээ <em>хэрхэн шалгах вэ?</em></h2><p>Бүртгэлтэй мэдээллээ хэдхэн алхмаар шалгаарай.</p></div>
         </div>
         <div className="home-v2-inspiration-grid">
-          <article className="home-v2-inspiration-card">
-            <div className="home-v2-inspiration-photo photo-wind"><span>ЗАГВАР 01</span><b>ТАЛЫН САЛХИ</b></div>
-            <div className="home-v2-inspiration-info"><small>ХУРДНЫ ХИЙМОРЬ</small><h3>Талын салхи</h3><p>Уудам талд туурай тамгалах хурдан хүлгийн урам зориг.</p></div>
-          </article>
-          <article className="home-v2-inspiration-card">
-            <div className="home-v2-inspiration-photo photo-golden"><span>ЗАГВАР 02</span><b>ХҮЛЭГТ ХИЙМОРЬ</b></div>
-            <div className="home-v2-inspiration-info"><small>МОНГОЛ ӨВ СОЁЛ</small><h3>Хүлэгт хийморь</h3><p>Монгол адууны сүр хүч, хийморийг илэрхийлсэн загвар.</p></div>
-          </article>
-          <article className="home-v2-inspiration-card">
-            <div className="home-v2-inspiration-photo photo-race"><span>ЗАГВАР 03</span><b>ИХ ХУРДНЫ ЭЗЭН</b></div>
-            <div className="home-v2-inspiration-info"><small>ИХ УРАЛДААН</small><h3>Их хурдны эзэн</h3><p>Уралдааны догдлол, түрүүлж ирэх агшныг мэдрүүлнэ.</p></div>
-          </article>
+          <article className="home-v2-step-card"><span className="home-v2-step-no">01</span><div className="home-v2-step-icon"><Search size={22}/></div><small>НЭГДҮГЭЭР АЛХАМ</small><h3>Дугаараа оруулах</h3><p>Сугалаанд бүртгүүлсэн 8 оронтой гар утасны дугаараа оруулна.</p></article>
+          <article className="home-v2-step-card"><span className="home-v2-step-no">02</span><div className="home-v2-step-icon"><ShieldCheck size={22}/></div><small>ХОЁРДУГААР АЛХАМ</small><h3>Бүртгэлээ шалгах</h3><p>Систем таны дугаартай холбоотой бүртгэлийг шалгана.</p></article>
+          <article className="home-v2-step-card"><span className="home-v2-step-no">03</span><div className="home-v2-step-icon"><CheckCircle2 size={22}/></div><small>ГУРАВДУГААР АЛХАМ</small><h3>Үр дүнгээ харах</h3><p>Гүйлгээний огноо болон сугалааны эрхийн тоогоо харна.</p></article>
         </div>
       </section>
       <footer className="home-v2-footer">
