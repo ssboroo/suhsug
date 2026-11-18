@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowDown, Award, ChevronRight, Search, ShieldCheck } from "lucide-react";
+import { Award, ChevronRight, Search, ShieldCheck } from "lucide-react";
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
 
