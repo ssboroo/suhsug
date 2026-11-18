@@ -51,3 +51,9 @@ export function rowsForSheet(workbook: XLSX.WorkBook, sheetName: string) {
   if (!sheet) throw new Error("SHEET_NOT_FOUND");
   return XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1, raw: true, defval: "", blankrows: true });
 }
+
+export function countPhoneOccurrences(values: string[]) {
+  const counts = new Map<string, number>();
+  for (const phone of values) counts.set(phone, (counts.get(phone) ?? 0) + 1);
+  return counts;
+}
