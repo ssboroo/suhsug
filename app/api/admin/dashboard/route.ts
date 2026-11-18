@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 export async function GET() {
   if (!(await isAdmin())) return NextResponse.json({ error: "Нэвтрэх шаардлагатай." }, { status: 401 });
   const campaign = await db.campaign.findFirst({ where: { isActive: true }, select: { id: true, title: true, description: true, heroImageUrl: true, targetTicketCount: true, bankName: true, accountHolder: true, accountNumber: true, iban: true, facebookPageUrl: true, heroEyebrow: true, heroOverline: true, faqContent: true, stepsContent: true, closingTitle: true, footerDescription: true, status: true } });
-  if (!campaign) return NextResponse.json({ participants: 0, tickets: 0, transactionCount: 0, campaign: null, imports: [] });
+  if (!campaign) return NextResponse.json({ participants: 0, tickets: 0, transactionCount: 0, duplicatePhoneCount: 0, campaign: null, imports: [] });
   const [participantRows, tickets, transactionCount, imports, duplicateRows] = await Promise.all([
     db.$queryRaw<Array<{ count: number }>>`SELECT COUNT(DISTINCT "phoneNumber")::int AS count FROM "LotteryTransaction" WHERE "campaignId" = ${campaign.id}`,
     db.lotteryTransaction.count({ where: { campaignId: campaign.id } }),
