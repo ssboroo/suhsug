@@ -1,22 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Award, ArrowDown, ArrowUpRight, CheckCircle2, ChevronRight, CircleHelp, Search, ShieldCheck, Sparkles } from "lucide-react";
+import { Award, ArrowDown, ArrowUpRight, CheckCircle2, ChevronRight, Search, ShieldCheck, Share2 } from "lucide-react";
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
-type PublicCampaign = { title: string; description: string; heroImageUrl: string | null };
+type PublicCampaign = { title: string; description: string; heroImageUrl: string | null; targetTicketCount: number | null };\ntype PublicProgress = { tickets: number; target: number; percent: number };
 
 export default function HomePage() {
   const [phone, setPhone] = useState("");
   const [result, setResult] = useState<Result[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [campaign, setCampaign] = useState<PublicCampaign | null>(null);
+  const [campaign, setCampaign] = useState<PublicCampaign | null>(null);\n  const [progress, setProgress] = useState<PublicProgress | null>(null);
 
   useEffect(() => {
     fetch("/api/campaign/public", { cache: "no-store" })
       .then(response => response.ok ? response.json() : null)
-      .then(data => { if (data?.campaign) setCampaign(data.campaign); })
+      .then(data => { if (data?.campaign) setCampaign(data.campaign); if (data?.progress) setProgress(data.progress); })
       .catch(() => undefined);
   }, []);
 
@@ -34,7 +34,7 @@ export default function HomePage() {
     finally { setLoading(false); }
   }
 
-  const heroStyle = campaign?.heroImageUrl ? {
+  async function shareCampaign() {\n    const url = window.location.href.split("#")[0];\n    const title = campaign?.title || "Сүхбаатарын хурд — Сугалаат худалдаа";\n    const shareData = { title, text: campaign?.description || "Сугалааны мэдээлэл болон эрхээ шалгаарай.", url };\n    if (navigator.share) { try { await navigator.share(shareData); return; } catch (error) { if (error instanceof Error && error.name === "AbortError") return; } }\n    const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);\n    window.open(shareUrl, "_blank", "noopener,noreferrer,width=720,height=620");\n  }\n\n  const heroStyle = campaign?.heroImageUrl ? {
     backgroundImage: `linear-gradient(90deg,rgba(7,18,25,.94) 0%,rgba(7,18,25,.78) 46%,rgba(7,18,25,.22) 100%),url("${campaign.heroImageUrl}")`
   } : undefined;
 
@@ -63,6 +63,24 @@ export default function HomePage() {
       </div>
       <div className="hero-side-label">ХУРД · ХИЙМОРЬ · БАХАРХАЛ</div>
       <a href="#search" className="scroll-cue"><span>ДООШ ГҮЙЛГЭХ</span><ArrowDown size={15}/></a>
+    </section>
+
+    <section className="campaign-progress-section" aria-label="Сугалааны явц">
+      <div className="campaign-progress-card">
+        <div className="campaign-thumb-wrap">
+          <img src={campaign?.heroImageUrl || "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=640&h=420&q=85"} alt="Сүхбаатарын хурд сугалааны зураг" className="campaign-thumb"/>
+        </div>
+        <div className="campaign-progress-content">
+          <div className="section-kicker"><span/> СУГАЛААНЫ ЯВЦ</div>
+          <h2>{campaign?.title || "Сүхбаатарын хурд — Сугалаат худалдаа"}</h2>
+          {progress ? <>
+            <div className="progress-meta"><span>Дүүргэлтийн явц</span><strong>{progress.percent}%</strong></div>
+            <div className="progress-track" role="progressbar" aria-label="Сугалааны дүүргэлт" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress.percent}><span style={{width: progress.percent + "%"}}/></div>
+            <div className="progress-count"><span>{progress.tickets.toLocaleString("mn-MN")} эрх бүртгэгдсэн</span><span>Зорилт {progress.target.toLocaleString("mn-MN")} эрх</span></div>
+          </> : <p className="progress-unset">Сугалааны дүүргэлтийн мэдээлэл удахгүй харагдана.</p>}
+          <button type="button" className="facebook-share-btn" onClick={shareCampaign}><Share2 size={17}/> Facebook дээр хуваалцах</button>
+        </div>
+      </div>
     </section>
 
     <div className="ornament-divider"><span>ᠮ</span></div>
