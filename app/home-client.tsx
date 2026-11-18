@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 import { Award, ArrowDown, ArrowUpRight, CheckCircle2, ChevronRight, Search, ShieldCheck, Share2 } from "lucide-react";
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
-type PublicCampaign = { title: string; description: string; heroImageUrl: string | null; targetTicketCount: number | null };\ntype PublicProgress = { tickets: number; target: number; percent: number };
+type PublicCampaign = { title: string; description: string; heroImageUrl: string | null; targetTicketCount: number | null };
+type PublicProgress = { tickets: number; target: number; percent: number };
 
 export default function HomePage() {
   const [phone, setPhone] = useState("");
   const [result, setResult] = useState<Result[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [campaign, setCampaign] = useState<PublicCampaign | null>(null);\n  const [progress, setProgress] = useState<PublicProgress | null>(null);
+  const [campaign, setCampaign] = useState<PublicCampaign | null>(null);
+  const [progress, setProgress] = useState<PublicProgress | null>(null);
 
   useEffect(() => {
     fetch("/api/campaign/public", { cache: "no-store" })
@@ -34,7 +36,16 @@ export default function HomePage() {
     finally { setLoading(false); }
   }
 
-  async function shareCampaign() {\n    const url = window.location.href.split("#")[0];\n    const title = campaign?.title || "Сүхбаатарын хурд — Сугалаат худалдаа";\n    const shareData = { title, text: campaign?.description || "Сугалааны мэдээлэл болон эрхээ шалгаарай.", url };\n    if (navigator.share) { try { await navigator.share(shareData); return; } catch (error) { if (error instanceof Error && error.name === "AbortError") return; } }\n    const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);\n    window.open(shareUrl, "_blank", "noopener,noreferrer,width=720,height=620");\n  }\n\n  const heroStyle = campaign?.heroImageUrl ? {
+  async function shareCampaign() {
+    const url = window.location.href.split("#")[0];
+    const title = campaign?.title || "Сүхбаатарын хурд — Сугалаат худалдаа";
+    const shareData = { title, text: campaign?.description || "Сугалааны мэдээлэл болон эрхээ шалгаарай.", url };
+    if (navigator.share) { try { await navigator.share(shareData); return; } catch (error) { if (error instanceof Error && error.name === "AbortError") return; } }
+    const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
+    window.open(shareUrl, "_blank", "noopener,noreferrer,width=720,height=620");
+  }
+
+  const heroStyle = campaign?.heroImageUrl ? {
     backgroundImage: `linear-gradient(90deg,rgba(7,18,25,.94) 0%,rgba(7,18,25,.78) 46%,rgba(7,18,25,.22) 100%),url("${campaign.heroImageUrl}")`
   } : undefined;
 
