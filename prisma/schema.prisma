@@ -21,6 +21,11 @@ model Campaign {
   description  String   @default("")
   heroImageUrl String?
   targetTicketCount Int?
+  bankName String?
+  accountHolder String?
+  accountNumber String?
+  iban String?
+  facebookPageUrl String?
   status       String   @default("DRAFT")
   isActive     Boolean  @default(false)
   createdAt    DateTime @default(now())
