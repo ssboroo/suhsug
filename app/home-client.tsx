@@ -1,11 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Award, ArrowDown, ArrowUpRight, CheckCircle2, ChevronRight, Search, ShieldCheck, Share2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Facebook, Search, ShieldCheck, Sparkles, Trophy } from "lucide-react";
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
-type PublicCampaign = { title: string; description: string; heroImageUrl: string | null; heroEyebrow:string|null; heroOverline:string|null; faqContent:string|null; stepsContent:string|null; closingTitle:string|null; footerDescription:string|null; bankName: string | null; accountHolder: string | null; accountNumber: string | null; iban: string | null; facebookPageUrl: string | null };
+type PublicCampaign = {
+  title: string; description: string; heroImageUrl: string | null; heroEyebrow: string | null;
+  heroOverline: string | null; faqContent: string | null; stepsContent: string | null;
+  closingTitle: string | null; footerDescription: string | null; bankName: string | null;
+  accountHolder: string | null; accountNumber: string | null; iban: string | null;
+  facebookPageUrl: string | null;
+};
 type PublicProgress = { percent: number };
+
+const defaultHorseImage = "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=2200&q=90";
 
 export default function HomePage() {
   const [phone, setPhone] = useState("");
@@ -32,149 +40,92 @@ export default function HomePage() {
       if (!response.ok) throw new Error(data.error || "Хайлт хийхэд алдаа гарлаа.");
       setResult(data.records || []);
       if (!data.records?.length) setMessage("Энэ дугаарт бүртгэл олдсонгүй. Утасны дугаараа шалгаад дахин оролдоно уу.");
-    } catch (error) { setMessage(error instanceof Error ? error.message : "Түр алдаа гарлаа."); }
-    finally { setLoading(false); }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Түр алдаа гарлаа.");
+    } finally { setLoading(false); }
   }
 
-  async function shareCampaign() {
+  function shareCampaign() {
     const url = window.location.href.split("#")[0];
-    const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
-    window.open(shareUrl, "_blank", "noopener,noreferrer,width=720,height=620");
+    window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank", "noopener,noreferrer,width=720,height=620");
   }
 
-  const steps = (campaign?.stepsContent || `Дугаараа оруулах || Сугалаанд бүртгүүлсэн 8 оронтой утасны дугаараа бичнэ.
-Мэдээллээ шалгах || “Сугалаагаа шалгах” товчийг дарна.
-Эрхийн тоогоо харах || Бүртгэл олдвол эрхийн тоогоо харна.`).split(/\r?\n/).map(line=>line.split("||").map(part=>part.trim())).filter(parts=>parts.length>=2 && parts[0] && parts[1]).slice(0,3);
-  const faqs = (campaign?.faqContent || `Сугалаанд хэрхэн оролцох вэ? || Зохион байгуулагчийн нийтэлсэн нөхцөл, зааврыг дагана уу.
-Сугалааны эрхээ хэрхэн шалгах вэ? || 8 оронтой утасны дугаараа оруулж хайна уу.
-Миний бүртгэл харагдахгүй байвал яах вэ? || Дугаараа шалгаад дахин хайна уу.
-Данс болон IBAN мэдээллийг хаанаас харах вэ? || Албан ёсны дансны хэсгээс харна уу.
-Сугалааны талаар хаанаас лавлах вэ? || Доорх Facebook Page-ээр холбогдоно уу.`).split(/\r?\n/).map(line=>line.split("||").map(part=>part.trim())).filter(parts=>parts.length>=2 && parts[0] && parts[1]).slice(0,12);
+  const heroImage = campaign?.heroImageUrl || defaultHorseImage;
+  const heroStyle = {
+    backgroundImage: `linear-gradient(90deg,rgba(5,16,23,.88) 0%,rgba(5,16,23,.67) 44%,rgba(5,16,23,.22) 100%),url("${heroImage}")`
+  };
 
-  const heroStyle = campaign?.heroImageUrl ? {
-    backgroundImage: `linear-gradient(90deg,rgba(7,18,25,.94) 0%,rgba(7,18,25,.78) 46%,rgba(7,18,25,.22) 100%),url("${campaign.heroImageUrl}")`
-  } : undefined;
+  return (
+    <main className="home-v2">
+      <header className="home-v2-header">
+        <a href="#home" className="home-v2-brand" aria-label="Сүхбаатарын хурд нүүр хуудас">
+          <span className="home-v2-emblem">ᠮ</span>
+          <span><strong>СҮХБААТАРЫН ХУРД</strong><small>СУГАЛААТ ХУДАЛДАА</small></span>
+        </a>
+        <nav className="home-v2-nav" aria-label="Үндсэн цэс">
+          <a href="#home">НҮҮР</a>
+          {campaign?.facebookPageUrl && <a href={campaign.facebookPageUrl} target="_blank" rel="noopener noreferrer">FACEBOOK</a>}
+        </nav>
+        <a className="home-v2-header-cta" href="#ticket-check"><Search size={15}/> ЭРХЭЭ ШАЛГАХ</a>
+      </header>
 
-  return <main className="site-shell">
-    <header className="topbar">
-      <a href="#home" className="brand" aria-label="Сүхбаатарын хурд нүүр хуудас">
-        <span className="brand-mark"><span>ᠮ</span></span>
-        <span className="brand-name"><strong>СҮХБААТАРЫН ХУРД</strong><small>СУГАЛААТ ХУДАЛДАА</small></span>
-      </a>
-      <nav className="navlinks" aria-label="Үндсэн цэс">
-        <a href="#home" className="active">НҮҮР</a><a href="#search">ЭРХЭЭ ШАЛГАХ</a><a href="#about">МЭДЭЭЛЭЛ</a>
-      </nav>
-      <a href="#search" className="header-cta">СУГАЛАА ШАЛГАХ <ArrowUpRight size={16}/></a>
-    </header>
+      <section className="home-v2-hero" id="home" style={heroStyle}>
+        <div className="home-v2-shade"/>
+        <div className="home-v2-inner">
+          <div className="home-v2-story">
+            <div className="home-v2-kicker"><span/> {campaign?.heroEyebrow || "ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ"}</div>
+            <p className="home-v2-overline">{campaign?.heroOverline || "МОНГОЛЫН ХУРДНЫ ӨВ СОЁЛ"}</p>
+            <h1>СҮХБААТАРЫН<br/><em>ХУРД</em></h1>
+            <div className="home-v2-subtitle"><span/> СУГАЛААТ ХУДАЛДАА</div>
+            <p className="home-v2-description">{campaign?.description || "Монгол түмний хийморь болсон хурдан хүлгийн уралдаанд тавтай морил. Сугалаанд бүртгүүлсэн эрхээ утасны дугаараараа хялбар, шуурхай шалгаарай."}</p>
+            <div className="home-v2-trust"><ShieldCheck size={16}/> Бүртгэлийн мэдээллийг албан ёсны системээс шалгана</div>
+            <div className="home-v2-progress">
+              <span className="home-v2-progress-icon"><Trophy size={16}/></span>
+              <span className="home-v2-progress-copy"><strong>СУГАЛААНЫ ЯВЦ</strong><small>{campaign?.title || "Сүхбаатарын хурд"}</small></span>
+              {progress ? <strong className="home-v2-progress-percent">{progress.percent}%</strong> : <span className="home-v2-progress-live">АЛБАН ЁСНЫ</span>}
+              {progress && <span className="home-v2-progress-line"><i style={{width: progress.percent + "%"}}/></span>}
+            </div>
+            <button className="home-v2-share" type="button" onClick={shareCampaign}><Facebook size={15}/> Facebook дээр хуваалцах</button>
+          </div>
 
-    <section className="hero" id="home" style={heroStyle}>
-      <div className="hero-overlay" />
-      <div className="hero-content">
-        <div className="eyebrow"><span className="eyebrow-line"/> {campaign?.heroEyebrow || "ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ"} <span className="eyebrow-line"/></div>
-        <p className="hero-overline">{campaign?.heroOverline || "МОНГОЛЫН ХУРДНЫ ӨВ СОЁЛ"}</p>
-        <h1>СҮХБААТАРЫН<span>ХУРД</span></h1>
-        <div className="hero-subtitle"><span/> СУГАЛААТ ХУДАЛДАА <span/></div>
-        <p className="hero-copy">{campaign?.description || "Монгол түмний хийморь болсон хурдан хүлгийн уралдаанд тавтай морил. Сугалаанд бүртгүүлсэн эрхээ утасны дугаараараа хялбар, шуурхай шалгаарай."}</p>
-        <a className="primary-btn" href="#search">СУГАЛААНЫ ЭРХЭЭ ШАЛГАХ <ChevronRight size={18}/></a>
-        <div className="hero-footnote"><ShieldCheck size={16}/> Бүртгэлийн мэдээллээ албан ёсны системээс шалгана</div>
-      </div>
-      <div className="hero-side-label">ХУРД · ХИЙМОРЬ · БАХАРХАЛ</div>
-      <a href="#search" className="scroll-cue"><span>ДООШ ГҮЙЛГЭХ</span><ArrowDown size={15}/></a>
-    </section>
-
-    <section className="campaign-progress-section" aria-label="Сугалааны явц">
-      <div className="campaign-progress-card">
-        <div className="campaign-thumb-wrap">
-          <img src={campaign?.heroImageUrl || "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=640&h=420&q=85"} alt="Сүхбаатарын хурд сугалааны зураг" className="campaign-thumb"/>
+          <aside className="home-v2-check-card" id="ticket-check">
+            <div className="home-v2-card-top"><span className="home-v2-card-icon"><Sparkles size={18}/></span><span className="home-v2-card-tag">ШУУРХАЙ · ХЯЛБАР · НАЙДВАРТАЙ</span></div>
+            <div className="home-v2-card-heading">
+              <span>СУГАЛААНЫ ЭРХ</span>
+              <h2>Эрхээ шалгах</h2>
+              <p>Бүртгүүлсэн утасны дугаараа оруулна уу.</p>
+            </div>
+            <form onSubmit={searchPhone} className="home-v2-form">
+              <label htmlFor="phone-v2">УТАСНЫ ДУГААР</label>
+              <div className="home-v2-phone">
+                <span>+976</span>
+                <input id="phone-v2" type="tel" inputMode="numeric" autoComplete="tel-national" maxLength={8} placeholder="9911 2233" value={phone}
+                  onChange={e => {setPhone(e.target.value.replace(/\D/g, "").slice(0, 8)); setMessage(""); setResult(null);}}/>
+                <small>{phone.length}/8</small>
+              </div>
+              <button className="home-v2-submit" type="submit" disabled={phone.length !== 8 || loading}>
+                <Search size={17}/>{loading ? "ШАЛГАЖ БАЙНА..." : "СУГАЛААНЫ ЭРХЭЭ ШАЛГАХ"}<ArrowRight size={17}/>
+              </button>
+              {message && <div role="status" className={message.includes("бүртгэл олдсонгүй") ? "home-v2-message warning" : "home-v2-message error"}>{message}</div>}
+            </form>
+            {result && result.length > 0 && <div className="home-v2-result" aria-live="polite">
+              <div className="home-v2-result-title"><CheckCircle2 size={18}/><span><strong>БҮРТГЭЛ ОЛДЛОО</strong><small>Таны хайлтын үр дүн</small></span></div>
+              {result.map((r, i) => <div className="home-v2-result-row" key={i}>
+                <div><small>Гүйлгээний огноо</small><strong>{new Date(r.transactionDate).toLocaleDateString("mn-MN")}</strong></div>
+                <div><small>Сугалааны эрх</small><strong className="home-v2-ticket-count">{r.ticketCount} <i>ЭРХ</i></strong></div>
+              </div>)}
+            </div>}
+            <div className="home-v2-card-foot"><ShieldCheck size={14}/> Таны мэдээлэл хамгаалагдсан.</div>
+          </aside>
         </div>
-        <div className="campaign-progress-content">
-          <div className="section-kicker"><span/> СУГАЛААНЫ ЯВЦ</div>
-          <h2>{campaign?.title || "Сүхбаатарын хурд — Сугалаат худалдаа"}</h2>
-          {progress ? <>
-            <div className="progress-meta"><span>Дүүргэлтийн явц</span><strong>{progress.percent}%</strong></div>
-            <div className="progress-track" role="progressbar" aria-label="Сугалааны дүүргэлт" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress.percent}><span style={{width: progress.percent + "%"}}/></div>
-            <div className="progress-count"><span>Сугалааны дүүргэлт</span><span>Зорилтот явц</span></div>
-          </> : <p className="progress-unset">Сугалааны дүүргэлтийн мэдээлэл удахгүй харагдана.</p>}
-          <button type="button" className="facebook-share-btn" onClick={shareCampaign}><Share2 size={17}/> Facebook дээр хуваалцах</button>
-        </div>
-      </div>
-    </section>
+        <div className="home-v2-bottom-mark"><span/> ХУРД · ХИЙМОРЬ · БАХАРХАЛ <span/></div>
+      </section>
 
-    <div className="ornament-divider"><span>ᠮ</span></div>
-
-    <section className="lookup-section section" id="search">
-      <div className="section-inner lookup-layout">
-        <div className="lookup-intro">
-          <div className="section-kicker"><span/> ТАНЫ ХИЙМОРЬ ӨӨДӨӨ</div>
-          <h2 className="section-title">Сугалааны эрхээ<br/><em>шалгах</em></h2>
-          <p className="section-desc">Бүртгүүлсэн утасны дугаараа оруулснаар таны сугалааны эрхийн мэдээлэл шууд харагдана.</p>
-          <div className="lookup-assurance"><span className="assurance-icon"><ShieldCheck size={20}/></span><span><strong>Найдвартай шалгалт</strong><small>Зөвхөн таны дугаарт бүртгэлтэй мэдээлэл</small></span></div>
-        </div>
-        <div className="lookup-panel">
-          <div className="panel-topline"><span>ЭРХ ШАЛГАХ ХЭСЭГ</span><span className="live-dot">ШУУРХАЙ ХАЙЛТ</span></div>
-          <div className="panel-heading"><div className="panel-icon"><Search size={21}/></div><div><h3>Утасны дугаараа оруулна уу</h3><p>8 оронтой дугаар ашиглана уу</p></div></div>
-          <form className="search-card" onSubmit={searchPhone}>
-            <label className="search-label" htmlFor="phone">ТАНЫ УТАСНЫ ДУГААР</label>
-            <div className="phone-field"><span className="country-code">+976</span><input id="phone" className="phone-input" type="tel" inputMode="numeric" autoComplete="tel-national" maxLength={8} placeholder="9911 2233" value={phone} onChange={e=>{setPhone(e.target.value.replace(/\D/g,"").slice(0,8));setMessage("");setResult(null);}} /></div>
-            <div className="input-hint"><span>Зөвхөн тоо оруулна уу</span><span>{phone.length}/8</span></div>
-            <button className="search-submit" type="submit" disabled={phone.length!==8 || loading}><Search size={18}/>{loading ? "ШАЛГАЖ БАЙНА..." : "СУГАЛААГАА ШАЛГАХ"}<ChevronRight size={17}/></button>
-            {message && <div role="status" className={message.includes("бүртгэл олдсонгүй") ? "notice notice-warn" : "notice notice-error"}>{message}</div>}
-          </form>
-          {result && result.length>0 && <div className="result-card" aria-live="polite">
-            <div className="result-heading"><span className="result-check"><CheckCircle2 size={18}/></span><div><strong>БҮРТГЭЛ ОЛДЛОО</strong><small>Таны хайлтын үр дүн</small></div></div>
-            {result.map((r,i)=><div className="result-record" key={i}>
-              <div className="result-row"><span>Гүйлгээний огноо</span><strong>{new Date(r.transactionDate).toLocaleDateString("mn-MN")}</strong></div>
-              <div className="result-row"><span>Утасны дугаар</span><strong>{r.phoneNumber}</strong></div>
-              <div className="result-ticket"><span>Сугалааны эрхийн тоо</span><strong>{r.ticketCount}<small>ЭРХ</small></strong></div>
-            </div>)}
-          </div>}
-          <div className="privacy-note"><ShieldCheck size={14}/> Таны мэдээллийг зөвхөн шалгах зорилгоор ашиглана.</div>
-        </div>
-      </div>
-    </section>
-
-    <section className="steps-section" id="about">
-      <div className="section-inner">
-        <div className="section-kicker centered"><span/> ХЯЛБАР · ШУУРХАЙ · ОЙЛГОМЖТОЙ <span/></div>
-        <h2 className="section-title centered">Эрхээ шалгах <em>3 алхам</em></h2>
-        <p className="section-desc centered">Сугалааны эрхийн мэдээллээ хэдхэн хормын дотор шалгаарай.</p>
-        <div className="steps-grid">
-          {steps.map((step,i)=><article className="step-card" key={i}><span className="step-number">0{i+1}</span><div className="step-icon">{i===0?<span>ᠮ</span>:i===1?<Search size={25}/>:<Award size={25}/>}</div><h3>{step[0]}</h3><p>{step[1]}</p></article>)}
-        </div>
-      </div>
-    </section>
-
-    {(campaign?.bankName || campaign?.accountHolder || campaign?.accountNumber || campaign?.iban) && <section className="bank-info-section" id="bank-info">
-      <div className="bank-info-inner">
-        <div className="section-kicker"><span/> АЛБАН ЁСНЫ ТӨЛБӨРИЙН МЭДЭЭЛЭЛ</div>
-        <h2 className="section-title">Сугалаанд оролцох <em>данс</em></h2>
-        <p className="section-desc">Зөвхөн доорх зохион байгуулагчийн албан ёсны дансны мэдээллийг ашиглана уу.</p>
-        <div className="bank-info-card">
-          {campaign?.bankName && <div className="bank-info-row"><span>Банк</span><strong>{campaign.bankName}</strong></div>}
-          {campaign?.accountHolder && <div className="bank-info-row"><span>Данс эзэмшигч</span><strong>{campaign.accountHolder}</strong></div>}
-          {campaign?.accountNumber && <div className="bank-info-row"><span>Дансны дугаар</span><strong>{campaign.accountNumber}</strong></div>}
-          {campaign?.iban && <div className="bank-info-row"><span>IBAN</span><strong>{campaign.iban}</strong></div>}
-        </div>
-        <p className="bank-info-warning">Гүйлгээ хийхээсээ өмнө дансны мэдээллийг нягтална уу. Хувийн болон өөр хүний данс руу шилжүүлэг бүү хийгээрэй.</p>
-      </div>
-    </section>}
-
-    <section className="faq-section" id="faq">
-      <div className="section-inner">
-        <div className="section-kicker centered"><span/> ТУСЛАМЖ · МЭДЭЭЛЭЛ <span/></div>
-        <h2 className="section-title centered">Түгээмэл <em>асуулт, хариулт</em></h2>
-        <p className="section-desc centered">Сугалаанд оролцох болон эрхээ шалгахтай холбоотой мэдээлэл.</p>
-        <div className="faq-list">
-          {faqs.map((faq,i)=><details className="faq-item" key={i}><summary>{faq[0]}</summary><p>{faq[1]}</p></details>)}
-        </div>
-      </div>
-    </section>
-
-    <section className="closing-band"><div className="closing-ornament">ᠮ</div><p>МОНГОЛЫН ХИЙМОРЬ · ХУРДНЫ БАХАРХАЛ</p><h2>{campaign?.closingTitle || "Хурдны өлзий дэлгэрэх болтугай"}</h2><a href="#search">ЭРХЭЭ ОДОО ШАЛГАХ <ArrowUpRight size={16}/></a></section>
-
-    <footer className="footer">
-      <div className="footer-main"><div className="brand"><span className="brand-mark"><span>ᠮ</span></span><span className="brand-name"><strong>СҮХБААТАРЫН ХУРД</strong><small>СУГАЛААТ ХУДАЛДАА</small></span></div><p>{campaign?.footerDescription || "Монгол өв соёл, хурдны хийморийг эрхэмлэн дээдэлье."}</p><div className="footer-actions">{campaign?.facebookPageUrl && <a href={campaign.facebookPageUrl} target="_blank" rel="noopener noreferrer">FACEBOOK PAGE ↗</a>}<a href="#home">ДЭЭШ БУЦАХ ↑</a></div></div>
-      <div className="footer-bottom"><span>© {new Date().getFullYear()} Сүхбаатарын хурд. Бүх эрх хуулиар хамгаалагдсан.</span><span>МОНГОЛ УЛС</span></div>
-    </footer>
-  </main>;
+      <footer className="home-v2-footer">
+        <span>© {new Date().getFullYear()} СҮХБААТАРЫН ХУРД</span>
+        <span>{campaign?.footerDescription || "Монгол өв соёл, хурдны хийморийг эрхэмлэн дээдэлье."}</span>
+        <a href="#home">ДЭЭШ ↑</a>
+      </footer>
+    </main>
+  );
 }
