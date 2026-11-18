@@ -22,6 +22,7 @@ model Campaign {
   heroImageUrl String?
   targetTicketCount Int?
   bankName String?
+  bankLogoUrl String?
   accountHolder String?
   accountNumber String?
   iban String?
