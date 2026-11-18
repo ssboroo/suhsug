@@ -11,8 +11,8 @@ export async function generateMetadata(): Promise<Metadata> {
     where: { isActive: true, status: "PUBLISHED" },
     select: { title: true, description: true, heroImageUrl: true }
   }).catch(() => null);
-  const title = campaign?.title || "Сүхбаатарын хурд — Морины сугалаа";
-  const description = campaign?.description || "Сүхбаатарын хурд морины сугалааны эрхээ утасны дугаараар шалгана уу.";
+  const title = campaign?.title || "Сүхбаатарын хурд — Сугалаат худалдаа";
+  const description = campaign?.description || "Сүхбаатарын хурд — Сугалаат худалдаа. Сугалааны эрхээ утасны дугаараар шалгаарай.";
   const image = campaign?.heroImageUrl || fallbackImage;
   return {
     title,
