@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const description = "Сүхбаатарын хурд морины сугалааны эрхээ утасны дугаараар шалгана уу.";
+const description = "Сүхбаатарын хурд — Сугалаат худалдаа. Сугалааны эрхээ утасны дугаараар шалгаарай.";
 export const metadata: Metadata = {
-  title: "Сүхбаатарын хурд | Сугалааны эрх шалгах",
+  title: "Сүхбаатарын хурд — Сугалаат худалдаа",
   description,
   openGraph: {
-    title: "СҮХБААТАРЫН ХУРД — МОРИНЫ СУГАЛАА",
+    title: "СҮХБААТАРЫН ХУРД — СУГАЛААТ ХУДАЛДАА",
     description,
     type: "website",
     locale: "mn_MN",
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Сүхбаатарын хурд",
+    title: "Сүхбаатарын хурд — Сугалаат худалдаа",
     description,
     images: ["https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=1200&h=630&q=85"]
   }
