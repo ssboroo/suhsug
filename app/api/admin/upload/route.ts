@@ -4,7 +4,7 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { isAdmin } from "@/lib/auth";
 
 export const maxDuration = 30;
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
 const types = {
   "image/jpeg": { extension: "jpg", signature: (b: Buffer) => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff },
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
   const form = await request.formData();
   const file = form.get("file");
   if (!(file instanceof File) || file.size < 1 || file.size > MAX_IMAGE_BYTES) {
-    return NextResponse.json({ error: "Зураг 5MB-аас бага байх ёстой." }, { status: 400 });
+    return NextResponse.json({ error: "Зураг 4MB-аас бага байх ёстой." }, { status: 400 });
   }
   const mime = file.type as keyof typeof types;
   const rule = types[mime];
