@@ -16,15 +16,16 @@ model Admin {
 }
 
 model Campaign {
-  id          String   @id @default(cuid())
-  title       String
-  description String   @default("")
-  status      String   @default("DRAFT")
-  isActive    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  title        String
+  description  String   @default("")
+  heroImageUrl String?
+  status       String   @default("DRAFT")
+  isActive     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   transactions LotteryTransaction[]
-  imports     ImportBatch[]
+  imports      ImportBatch[]
 }
 
 model LotteryTransaction {
@@ -72,21 +73,21 @@ model ImportError {
 }
 
 model SiteSettings {
-  id        String @id @default("main")
-  facebookUrl String @default("")
-  updatedAt DateTime @updatedAt
+  id          String   @id @default("main")
+  facebookUrl String   @default("")
+  updatedAt   DateTime @updatedAt
 }
 
 model GalleryImage {
-  id        String @id @default(cuid())
+  id        String   @id @default(cuid())
   url       String
-  alt       String @default("")
-  sortOrder Int @default(0)
+  alt       String   @default("")
+  sortOrder Int      @default(0)
   createdAt DateTime @default(now())
 }
 
 model AdminAuditLog {
-  id        String @id @default(cuid())
+  id        String   @id @default(cuid())
   action    String
   details   Json?
   createdAt DateTime @default(now())
