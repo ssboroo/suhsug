@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createHash } from "node:crypto";
 import { isAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { dateFromCell, parsePhoneCell, readWorkbook, rowsForSheet, sha256 } from "@/lib/lottery-import";
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
     }
     if (seenPhones.has(parsed.phone)) duplicatePhoneRows++;
     seenPhones.add(parsed.phone);
-    const transactionId = "row_" + fileHash.slice(0, 24) + "_" + Buffer.from(sheetName).toString("base64url").slice(0, 20) + "_" + (index + 1);
+    const transactionId = "row_" + createHash("sha256").update(`${fileHash}:${sheetName}:${index + 1}`).digest("hex");
     valid.push({
       transactionId,
       transactionDate: dateColumn > 0 ? dateFromCell(row[dateColumn - 1]) : new Date(),
