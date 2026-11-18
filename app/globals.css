@@ -70,3 +70,25 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit}
 .facebook-share-btn{align-self:flex-start;display:inline-flex;align-items:center;justify-content:center;gap:9px;margin-top:24px;min-height:44px;padding:0 17px;border:1px solid #d0ad70;background:#142735;color:#f4dfb7;font-size:11px;font-weight:800;letter-spacing:.04em;transition:background .2s,transform .2s}
 .facebook-share-btn:hover{background:#254454;transform:translateY(-1px)}
 @media(max-width:700px){.campaign-progress-section{padding:28px 18px}.campaign-progress-card{grid-template-columns:1fr}.campaign-thumb-wrap,.campaign-thumb{min-height:190px;height:190px}.campaign-progress-content{padding:23px 20px}.campaign-progress-content h2{font-size:22px;margin:12px 0 20px}.progress-count{font-size:9px}}
+
+/* Public FAQ, payment account and contact */
+.bank-info-section,.faq-section{padding:76px 26px;background:#f7f3eb}
+.bank-info-inner{max-width:850px;margin:0 auto}
+.bank-info-inner>.section-title{margin:15px 0 10px}
+.bank-info-card{margin-top:25px;padding:8px 24px;background:#fffdf8;border:1px solid #e1d5c0;box-shadow:0 14px 38px #172b380b}
+.bank-info-row{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:17px 0;border-bottom:1px solid #eee7dc}
+.bank-info-row:last-child{border-bottom:0}
+.bank-info-row span{font-size:12px;color:#7b827a}
+.bank-info-row strong{font-size:14px;color:#1c3036;text-align:right;overflow-wrap:anywhere}
+.bank-info-warning{font-size:11px;line-height:1.8;color:#8c6540;margin-top:13px}
+.faq-section{background:#eee8dc}
+.faq-list{max-width:850px;margin:35px auto 0;border-top:1px solid #d9cdb9}
+.faq-item{border-bottom:1px solid #d9cdb9;background:#f8f5ee}
+.faq-item summary{position:relative;cursor:pointer;list-style:none;padding:20px 54px 20px 20px;color:#1d3034;font-size:14px;font-weight:800}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary:after{content:"+";position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:22px;color:#a77d3c;font-weight:400}
+.faq-item[open] summary:after{content:"−"}
+.faq-item p{margin:0;padding:0 20px 22px;color:#69736d;font-size:12px;line-height:1.9;max-width:760px}
+.footer-actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.footer-actions a{font-size:9px;letter-spacing:.12em;color:var(--gold2);text-decoration:none;font-weight:800}
+@media(max-width:700px){.bank-info-section,.faq-section{padding:58px 18px}.bank-info-card{padding:5px 16px}.bank-info-row{align-items:flex-start;gap:12px;padding:15px 0}.bank-info-row span{font-size:10px}.bank-info-row strong{font-size:12px}.faq-list{margin-top:25px}.faq-item summary{font-size:12px;padding:17px 45px 17px 15px}.faq-item p{font-size:11px;padding:0 15px 18px}.footer-actions{width:100%;justify-content:space-between}}
