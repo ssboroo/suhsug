@@ -17,7 +17,8 @@ export async function GET(request: NextRequest) {
       { error: "Хэт олон удаа хайлт хийлээ. Түр хүлээгээд дахин оролдоно уу." },
       { status: 429, headers: { "Retry-After": String(Math.max(1, Math.ceil((limit.reset - Date.now()) / 1000))) } }
     );
-    const campaign = await db.campaign.findFirst({ where: { isActive: true, status: "PUBLISHED" }, select: { id: true } });
+    const campaignId = request.nextUrl.searchParams.get("campaignId");
+    const campaign = campaignId ? await db.campaign.findFirst({ where: { id: campaignId, isActive: true, status: "PUBLISHED" }, select: { id: true } }) : await db.campaign.findFirst({ where: { isActive: true, status: "PUBLISHED" }, orderBy: { updatedAt: "desc" }, select: { id: true } });
     if (!campaign) return NextResponse.json({ records: [], ticketCount: 0, occurrenceCount: 0 }, { headers: { "Cache-Control": "no-store, max-age=0" } });
 
     const [count, latest] = await Promise.all([
