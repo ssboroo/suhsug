@@ -39,8 +39,6 @@ export default function HomePage() {
   async function shareCampaign() {
     const url = window.location.href.split("#")[0];
     const title = campaign?.title || "Сүхбаатарын хурд — Сугалаат худалдаа";
-    const shareData = { title, text: campaign?.description || "Сугалааны мэдээлэл болон эрхээ шалгаарай.", url };
-    if (navigator.share) { try { await navigator.share(shareData); return; } catch (error) { if (error instanceof Error && error.name === "AbortError") return; } }
     const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
     window.open(shareUrl, "_blank", "noopener,noreferrer,width=720,height=620");
   }
