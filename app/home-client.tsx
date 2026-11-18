@@ -5,7 +5,7 @@ import { Award, ArrowDown, ArrowUpRight, CheckCircle2, ChevronRight, Search, Shi
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
 type PublicCampaign = { title: string; description: string; heroImageUrl: string | null; targetTicketCount: number | null };
-type PublicProgress = { tickets: number; target: number; percent: number };
+type PublicProgress = { percent: number };
 
 export default function HomePage() {
   const [phone, setPhone] = useState("");
@@ -53,7 +53,7 @@ export default function HomePage() {
     <header className="topbar">
       <a href="#home" className="brand" aria-label="Сүхбаатарын хурд нүүр хуудас">
         <span className="brand-mark"><span>ᠮ</span></span>
-        <span className="brand-name"><strong>СҮХБААТАРЫН ХУРД</strong><small>МОРИНЫ СУГАЛАА</small></span>
+        <span className="brand-name"><strong>СҮХБААТАРЫН ХУРД</strong><small>СУГАЛААТ ХУДАЛДАА</small></span>
       </a>
       <nav className="navlinks" aria-label="Үндсэн цэс">
         <a href="#home" className="active">НҮҮР</a><a href="#search">ЭРХЭЭ ШАЛГАХ</a><a href="#about">МЭДЭЭЛЭЛ</a>
@@ -67,7 +67,7 @@ export default function HomePage() {
         <div className="eyebrow"><span className="eyebrow-line"/> ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ <span className="eyebrow-line"/></div>
         <p className="hero-overline">МОНГОЛЫН ХУРДНЫ ӨВ СОЁЛ</p>
         <h1>{campaign?.title ?? "СҮХБААТАРЫН"}<span>{campaign?.title ? "" : "ХУРД"}</span></h1>
-        <div className="hero-subtitle"><span/> МОРИНЫ СУГАЛАА <span/></div>
+        <div className="hero-subtitle"><span/> СУГАЛААТ ХУДАЛДАА <span/></div>
         <p className="hero-copy">{campaign?.description || "Монгол түмний хийморь болсон хурдан хүлгийн уралдаанд тавтай морил. Сугалаанд бүртгүүлсэн эрхээ утасны дугаараараа хялбар, шуурхай шалгаарай."}</p>
         <a className="primary-btn" href="#search">СУГАЛААНЫ ЭРХЭЭ ШАЛГАХ <ChevronRight size={18}/></a>
         <div className="hero-footnote"><ShieldCheck size={16}/> Бүртгэлийн мэдээллээ албан ёсны системээс шалгана</div>
@@ -87,7 +87,7 @@ export default function HomePage() {
           {progress ? <>
             <div className="progress-meta"><span>Дүүргэлтийн явц</span><strong>{progress.percent}%</strong></div>
             <div className="progress-track" role="progressbar" aria-label="Сугалааны дүүргэлт" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress.percent}><span style={{width: progress.percent + "%"}}/></div>
-            <div className="progress-count"><span>{progress.tickets.toLocaleString("mn-MN")} эрх бүртгэгдсэн</span><span>Зорилт {progress.target.toLocaleString("mn-MN")} эрх</span></div>
+            <div className="progress-count"><span>Сугалааны дүүргэлт</span><span>Зорилтот явц</span></div>
           </> : <p className="progress-unset">Сугалааны дүүргэлтийн мэдээлэл удахгүй харагдана.</p>}
           <button type="button" className="facebook-share-btn" onClick={shareCampaign}><Share2 size={17}/> Facebook дээр хуваалцах</button>
         </div>
