@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle2, Facebook, Search, ShieldCheck, Sparkles, Trop
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
 type PublicCampaign = {
-  title: string; description: string; heroImageUrl: string | null; heroEyebrow: string | null;
+  title: string; description: string; heroImageUrl: string | null; bankName: string | null; bankLogoUrl: string | null; accountHolder: string | null; accountNumber: string | null; iban: string | null; heroEyebrow: string | null;
   heroOverline: string | null; faqContent: string | null; stepsContent: string | null;
   closingTitle: string | null; footerDescription: string | null; bankName: string | null;
   accountHolder: string | null; accountNumber: string | null; iban: string | null;
@@ -22,11 +22,12 @@ export default function HomePage() {
   const [message, setMessage] = useState("");
   const [campaign, setCampaign] = useState<PublicCampaign | null>(null);
   const [progress, setProgress] = useState<PublicProgress | null>(null);
+  const [stats, setStats] = useState<{participants:number;tickets:number}|null>(null);
 
   useEffect(() => {
     fetch("/api/campaign/public", { cache: "no-store" })
       .then(response => response.ok ? response.json() : null)
-      .then(data => { if (data?.campaign) setCampaign(data.campaign); if (data?.progress) setProgress(data.progress); })
+      .then(data => { if (data?.campaign) setCampaign(data.campaign); if (data?.progress) setProgress(data.progress); if (data?.stats) setStats(data.stats); })
       .catch(() => undefined);
   }, []);
 
@@ -114,6 +115,20 @@ export default function HomePage() {
                 <div><small>Гүйлгээний огноо</small><strong>{new Date(r.transactionDate).toLocaleDateString("mn-MN")}</strong></div>
                 <div><small>Сугалааны эрх</small><strong className="home-v2-ticket-count">{r.ticketCount} <i>ЭРХ</i></strong></div>
               </div>)}
+            </div>}
+            {(campaign?.bankName || campaign?.accountNumber) && <div className="home-v2-bank">
+              <div className="home-v2-bank-top">
+                {campaign.bankLogoUrl ? <img src={campaign.bankLogoUrl} alt={campaign.bankName || "Банк"} /> : <span className="home-v2-bank-mark">{(campaign.bankName || "Б").slice(0,1)}</span>}
+                <span><small>ОРОЛЦОХ ДАНС</small><strong>{campaign.bankName || "Банкны мэдээлэл"}</strong></span>
+              </div>
+              {campaign.accountNumber && <div className="home-v2-account"><span>ДАНСНЫ ДУГААР</span><strong>{campaign.accountNumber}</strong></div>}
+              {campaign.accountHolder && <div className="home-v2-account-holder">{campaign.accountHolder}</div>}
+              {campaign.iban && <div className="home-v2-iban">IBAN: {campaign.iban}</div>}
+            </div>}
+            {stats && <div className="home-v2-stats">
+              <div><strong>{stats.participants.toLocaleString("mn-MN")}</strong><small>ОРОЛЦОГЧ</small></div>
+              <span/>
+              <div><strong>{stats.tickets.toLocaleString("mn-MN")}</strong><small>НИЙТ ЭРХ</small></div>
             </div>}
             <div className="home-v2-card-foot"><ShieldCheck size={14}/> Таны мэдээлэл хамгаалагдсан.</div>
           </aside>
