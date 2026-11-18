@@ -9,8 +9,9 @@ export const maxDuration = 60;
 const MAX_FILE_BYTES = 12 * 1024 * 1024;
 const MAX_ROWS = 50_000;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Нэвтрэх шаардлагатай." }, { status: 401 });
+  const campaignId = request.nextUrl.searchParams.get("campaignId");
   const campaign = campaignId ? await db.campaign.findUnique({ where: { id: campaignId }, select: { id: true } }) : await db.campaign.findFirst({ where: { isActive: true }, select: { id: true } });
   if (!campaign) return NextResponse.json({ imports: [] });
   const imports = await db.importBatch.findMany({
