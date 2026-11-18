@@ -163,6 +163,26 @@ export default function HomePage() {
         <div className="home-v2-bottom-mark"><span/> ХУРД · ХИЙМОРЬ · БАХАРХАЛ <span/></div>
       </section>
 
+      <section className="home-v2-inspiration" aria-labelledby="inspiration-title">
+        <div className="home-v2-inspiration-head">
+          <div><span className="home-v2-section-kicker">МОНГОЛ ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ</span><h2 id="inspiration-title">Сугалааны <em>загварууд</em></h2><p>Дараах нь нэр, зураг, өнгө төрхийн жишээ загварууд юм. Бодит сугалаа биш.</p></div>
+          <span className="home-v2-inspiration-mark">2026<br/>COLLECTION</span>
+        </div>
+        <div className="home-v2-inspiration-grid">
+          <article className="home-v2-inspiration-card">
+            <div className="home-v2-inspiration-photo photo-wind"><span>ЗАГВАР 01</span><b>ТАЛЫН САЛХИ</b></div>
+            <div className="home-v2-inspiration-info"><small>ХУРДНЫ ХИЙМОРЬ</small><h3>Талын салхи</h3><p>Уудам талд туурай тамгалах хурдан хүлгийн урам зориг.</p></div>
+          </article>
+          <article className="home-v2-inspiration-card">
+            <div className="home-v2-inspiration-photo photo-golden"><span>ЗАГВАР 02</span><b>ХҮЛЭГТ ХИЙМОРЬ</b></div>
+            <div className="home-v2-inspiration-info"><small>МОНГОЛ ӨВ СОЁЛ</small><h3>Хүлэгт хийморь</h3><p>Монгол адууны сүр хүч, хийморийг илэрхийлсэн загвар.</p></div>
+          </article>
+          <article className="home-v2-inspiration-card">
+            <div className="home-v2-inspiration-photo photo-race"><span>ЗАГВАР 03</span><b>ИХ ХУРДНЫ ЭЗЭН</b></div>
+            <div className="home-v2-inspiration-info"><small>ИХ УРАЛДААН</small><h3>Их хурдны эзэн</h3><p>Уралдааны догдлол, түрүүлж ирэх агшныг мэдрүүлнэ.</p></div>
+          </article>
+        </div>
+      </section>
       <footer className="home-v2-footer">
         <span>© {new Date().getFullYear()} СҮХБААТАРЫН ХУРД</span>
         <span>{campaign?.footerDescription || "Монгол өв соёл, хурдны хийморийг эрхэмлэн дээдэлье."}</span>
