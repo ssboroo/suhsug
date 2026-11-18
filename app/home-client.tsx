@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Award, ArrowDown, ArrowUpRight, CheckCircle2, ChevronRight, Search, ShieldCheck, Share2 } from "lucide-react";
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
-type PublicCampaign = { title: string; description: string; heroImageUrl: string | null; targetTicketCount: number | null };
+type PublicCampaign = { title: string; description: string; heroImageUrl: string | null };
 type PublicProgress = { percent: number };
 
 export default function HomePage() {
@@ -63,7 +63,7 @@ export default function HomePage() {
       <div className="hero-content">
         <div className="eyebrow"><span className="eyebrow-line"/> ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ <span className="eyebrow-line"/></div>
         <p className="hero-overline">МОНГОЛЫН ХУРДНЫ ӨВ СОЁЛ</p>
-        <h1>{campaign?.title ?? "СҮХБААТАРЫН"}<span>{campaign?.title ? "" : "ХУРД"}</span></h1>
+        <h1>СҮХБААТАРЫН<span>ХУРД</span></h1>
         <div className="hero-subtitle"><span/> СУГАЛААТ ХУДАЛДАА <span/></div>
         <p className="hero-copy">{campaign?.description || "Монгол түмний хийморь болсон хурдан хүлгийн уралдаанд тавтай морил. Сугалаанд бүртгүүлсэн эрхээ утасны дугаараараа хялбар, шуурхай шалгаарай."}</p>
         <a className="primary-btn" href="#search">СУГАЛААНЫ ЭРХЭЭ ШАЛГАХ <ChevronRight size={18}/></a>
