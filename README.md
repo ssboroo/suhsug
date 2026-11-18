@@ -65,9 +65,8 @@ GitHub Actions нь push болон pull request бүрт PostgreSQL service д�
 
 ## Одоогоор үлдсэн production ажил
 - Бодит hosting, домэйн, PostgreSQL, Upstash Redis credentials тохируулах.
-- Зураг upload хийхэд S3-compatible object storage-ийн credentials болон public bucket/domain тохируулах.
+- Зураг upload хийхэд S3-compatible object storage-ийн credentials болон public bucket/domain тохируулах (админ зураг upload-ийн дээд хэмжээ 4MB).
 - Excel баганын визуал mapping нэмэх.
 - Бодит Excel файлууд болон олон хэрэглэгчийн ачааллын тест хийх.
-- Facebook Open Graph зурагт өөрийн эрхтэй зураг ашиглах.
 
 Production deployment нь environment тохиргоо болон бодит өгөгдлийн QA дууссаны дараа л бэлэн гэж тооцогдоно. Vercel ашиглавал serverless request body-ийн хэмжээний хязгаарыг харгалзан Excel upload-ийн дээд хэмжээг бууруулах эсвэл тусдаа direct-upload урсгал ашиглах шаардлагатай.
