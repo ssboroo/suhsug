@@ -42,7 +42,16 @@ export default function HomePage() {
     window.open(shareUrl, "_blank", "noopener,noreferrer,width=720,height=620");
   }
 
-  const steps = (campaign?.stepsContent || "Дугаараа оруулах || Сугалаанд бүртгүүлсэн 8 оронтой утасны дугаараа бичнэ.\\nМэдээллээ шалгах || “Сугалаагаа шалгах” товчийг дарна.\\nЭрхийн тоогоо харах || Бүртгэл олдвол эрхийн тоогоо харна.").split("\\n").map(line=>line.split("||").map(part=>part.trim())).filter(parts=>parts.length>=2 && parts[0] && parts[1]).slice(0,3);\n  const faqs = (campaign?.faqContent || "Сугалаанд хэрхэн оролцох вэ? || Зохион байгуулагчийн нийтэлсэн нөхцөл, зааврыг дагана уу.\\nСугалааны эрхээ хэрхэн шалгах вэ? || 8 оронтой утасны дугаараа оруулж хайна уу.\\nМиний бүртгэл харагдахгүй байвал яах вэ? || Дугаараа шалгаад дахин хайна уу.\\nДанс болон IBAN мэдээллийг хаанаас харах вэ? || Албан ёсны дансны хэсгээс харна уу.\\nСугалааны талаар хаанаас лавлах вэ? || Доорх Facebook Page-ээр холбогдоно уу.").split("\\n").map(line=>line.split("||").map(part=>part.trim())).filter(parts=>parts.length>=2 && parts[0] && parts[1]).slice(0,12);\n\n  const heroStyle = campaign?.heroImageUrl ? {
+  const steps = (campaign?.stepsContent || `Дугаараа оруулах || Сугалаанд бүртгүүлсэн 8 оронтой утасны дугаараа бичнэ.
+Мэдээллээ шалгах || “Сугалаагаа шалгах” товчийг дарна.
+Эрхийн тоогоо харах || Бүртгэл олдвол эрхийн тоогоо харна.`).split(/\r?\n/).map(line=>line.split("||").map(part=>part.trim())).filter(parts=>parts.length>=2 && parts[0] && parts[1]).slice(0,3);
+  const faqs = (campaign?.faqContent || `Сугалаанд хэрхэн оролцох вэ? || Зохион байгуулагчийн нийтэлсэн нөхцөл, зааврыг дагана уу.
+Сугалааны эрхээ хэрхэн шалгах вэ? || 8 оронтой утасны дугаараа оруулж хайна уу.
+Миний бүртгэл харагдахгүй байвал яах вэ? || Дугаараа шалгаад дахин хайна уу.
+Данс болон IBAN мэдээллийг хаанаас харах вэ? || Албан ёсны дансны хэсгээс харна уу.
+Сугалааны талаар хаанаас лавлах вэ? || Доорх Facebook Page-ээр холбогдоно уу.`).split(/\r?\n/).map(line=>line.split("||").map(part=>part.trim())).filter(parts=>parts.length>=2 && parts[0] && parts[1]).slice(0,12);
+
+  const heroStyle = campaign?.heroImageUrl ? {
     backgroundImage: `linear-gradient(90deg,rgba(7,18,25,.94) 0%,rgba(7,18,25,.78) 46%,rgba(7,18,25,.22) 100%),url("${campaign.heroImageUrl}")`
   } : undefined;
 
