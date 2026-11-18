@@ -20,6 +20,7 @@ model Campaign {
   title        String
   description  String   @default("")
   heroImageUrl String?
+  targetTicketCount Int?
   status       String   @default("DRAFT")
   isActive     Boolean  @default(false)
   createdAt    DateTime @default(now())
