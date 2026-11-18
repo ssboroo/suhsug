@@ -21,7 +21,7 @@ export default function AdminDashboard(){
  async function logout(){await fetch("/api/admin/login",{method:"DELETE"});location.href="/admin/login";}
  return <main style={{minHeight:"100vh",background:"#f2ede3",color:"#1a2925",padding:24}}><div style={{maxWidth:1180,margin:"0 auto"}}>
  <header style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:16,flexWrap:"wrap",background:"#101d2a",color:"#f5e7c8",padding:"22px 26px",borderBottom:"3px solid #d5ad62"}}><div><div style={{fontSize:11,letterSpacing:3,color:"#d5ad62",fontWeight:800}}>СҮХБААТАРЫН ХУРД</div><h1 style={{fontSize:25,margin:"6px 0 0"}}>Админ удирдлага</h1></div><button onClick={logout} style={action}><LogOut size={16}/> Гарах</button></header>
- <p style={{fontSize:12,color:"#788078",margin:"18px 0 24px"}}><ShieldCheck size={14} style={{display:"inline",verticalAlign:"middle",marginRight:6}}/>Энэ хуудсан дахь статистик, Facebook хуваалцах болон Excel импортын түүх зөвхөн админд харагдана.</p>
+ <p style={{fontSize:12,color:"#788078",margin:"18px 0 24px"}}><ShieldCheck size={14} style={{display:"inline",verticalAlign:"middle",marginRight:6}}/>Энэ хуудсан дахь статистик болон Excel импортын түүх зөвхөн админд харагдана. Нүүр хуудсан дахь Facebook хуваалцах товч бүх хүнд нээлттэй.</p>
  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:16}}>
  <div style={card}><Users color="#a77b37"/><div style={muted}>Нийт оролцогч</div><strong style={metric}>{data?.participants.toLocaleString("mn-MN")??"—"}</strong></div>
  <div style={card}><Ticket color="#a77b37"/><div style={muted}>Нийт сугалааны эрх</div><strong style={metric}>{data?.tickets.toLocaleString("mn-MN")??"—"}</strong></div>
