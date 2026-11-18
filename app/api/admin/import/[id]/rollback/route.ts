@@ -15,7 +15,7 @@ export async function POST(_request: Request, context: { params: Promise<{ id: s
       // Use the same campaign lock as imports to make rollback ordering deterministic.
       await tx.$queryRaw`SELECT "id" FROM "Campaign" WHERE "id" = ${batch.campaignId} FOR UPDATE`;
       const latest = await tx.importBatch.findFirst({
-        where: { campaignId: batch.campaignId },
+        where: { campaignId: batch.campaignId, status: { not: "ROLLED_BACK" } },
         orderBy: { createdAt: "desc" },
         select: { id: true }
       });
