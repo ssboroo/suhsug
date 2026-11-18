@@ -15,7 +15,7 @@ export async function GET() {
   if (!campaign) return NextResponse.json({ imports: [] });
   const imports = await db.importBatch.findMany({
     where: { campaignId: campaign.id }, orderBy: { createdAt: "desc" }, take: 50,
-    select: { id: true, fileName: true, fileHash: true, sheetName: true, mode: true, status: true, totalRows: true, importedRows: true, rejectedRows: true, duplicateRows: true, createdAt: true }
+    select: { id: true, fileName: true, fileHash: true, sheetName: true, mode: true, status: true, totalRows: true, importedRows: true, rejectedRows: true, duplicateRows: true, duplicatePhoneRows: true, createdAt: true }
   });
   return NextResponse.json({ imports });
 }
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (!totalRows) return NextResponse.json({ error: "Сонгосон мужид өгөгдөл алга." }, { status: 400 });
-  if (!valid.length) return NextResponse.json({ error: "Хүчинтэй утасны дугаар олдсонгүй.", totalRows, rejected: errors.length, errors: errors.slice(0, 100) }, { status: 400 });
+  if (!valid.length && mode === "REPLACE") return NextResponse.json({ error: "REPLACE хийхэд хүчинтэй утасны дугаар алга. Өмнөх өгөгдлийг хамгаалж өөрчлөлт хийгээгүй.", totalRows, rejected: errors.length, errors: errors.slice(0, 100) }, { status: 400 });
 
   try {
     const result = await db.$transaction(async tx => {
@@ -100,11 +100,11 @@ export async function POST(request: NextRequest) {
       }) : [];
       const batch = await tx.importBatch.create({ data: {
         campaignId: campaign.id, fileName: file.name, fileHash, sheetName, mode, status: "COMPLETED",
-        totalRows, importedRows: valid.length, rejectedRows: errors.length, duplicateRows: 0,
+        totalRows, importedRows: valid.length, rejectedRows: errors.length, duplicateRows: 0, duplicatePhoneRows,
         snapshot: mode === "REPLACE" ? previous.map(row => ({ ...row, transactionDate: row.transactionDate.toISOString() })) : undefined
       }});
       if (mode === "REPLACE") await tx.lotteryTransaction.deleteMany({ where: { campaignId: campaign.id } });
-      await tx.lotteryTransaction.createMany({
+      if (valid.length) await tx.lotteryTransaction.createMany({
         data: valid.map(row => ({ ...row, campaignId: campaign.id, importBatchId: batch.id })),
         skipDuplicates: false
       });
