@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Mongolian:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Mongolian:wght@400;500;600;700;800&family=Noto+Serif+Mongolian:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root{--navy:#0b1823;--navy2:#142735;--navy3:#1d3541;--gold:#c69b52;--gold2:#efd49a;--cream:#f6f2e9;--paper:#fffdf8;--ink:#1a292b;--muted:#7b827c;--line:#e8dfcf}
@@ -878,7 +878,6 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit}
 .home-v2-how{background:#f4f0e7!important}.home-v2-how .home-v2-inspiration-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.home-v2-step-card{position:relative;min-height:245px;padding:28px;background:#fffdf8;border:1px solid #ddd4c4;box-shadow:0 14px 35px #1b2c3510}.home-v2-step-no{position:absolute;right:22px;top:19px;color:#b88a4b;font-size:28px;font-weight:800;letter-spacing:-.06em}.home-v2-step-icon{width:48px;height:48px;display:grid;place-items:center;margin-bottom:27px;background:#f0e8d8;color:#9b7540}.home-v2-step-card>small{font-size:8px;letter-spacing:.16em;color:#9b7846;font-weight:800}.home-v2-step-card h3{margin:9px 0;color:#1d2c20;font-size:20px}.home-v2-step-card p{margin:0;color:#72796e;font-size:11px;line-height:1.8}@media(max-width:700px){.home-v2-how .home-v2-inspiration-grid{grid-template-columns:1fr}.home-v2-step-card{min-height:0;padding:23px}.home-v2-step-icon{margin-bottom:18px}}
 
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Serif+Mongolian:wght@400;500;600;700&family=Noto+Sans+Mongolian:wght@400;500;600;700;800&display=swap');
 /* SUHSUG — luxury equestrian editorial system */
 :root{--lux-black:#111813;--lux-green:#1b2b20;--lux-green2:#293d2d;--lux-gold:#b18a50;--lux-champagne:#e3cda4;--lux-ivory:#f4f0e7;--lux-paper:#fffdf8;--lux-ink:#202a21;--lux-muted:#85877d;--lux-line:#dcd3c2}
 html{scroll-behavior:smooth;scroll-padding-top:86px}
