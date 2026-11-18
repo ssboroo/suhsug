@@ -11,7 +11,7 @@ export async function GET() {
     db.lotteryTransaction.count({ where: { campaignId: campaign.id } }),
     db.lotteryTransaction.count({ where: { campaignId: campaign.id } }),
     db.importBatch.findMany({ where: { campaignId: campaign.id }, orderBy: { createdAt: "desc" }, take: 20,
-      select: { id: true, fileName: true, fileHash: true, sheetName: true, mode: true, status: true, totalRows: true, importedRows: true, rejectedRows: true, duplicateRows: true, createdAt: true } }),
+      select: { id: true, fileName: true, fileHash: true, sheetName: true, mode: true, status: true, totalRows: true, importedRows: true, rejectedRows: true, duplicateRows: true, duplicatePhoneRows: true, createdAt: true } }),
     db.lotteryTransaction.groupBy({ by: ["phoneNumber"], where: { campaignId: campaign.id }, _count: { _all: true }, having: { phoneNumber: { _count: { gt: 1 } } } })
   ]);
   return NextResponse.json({
