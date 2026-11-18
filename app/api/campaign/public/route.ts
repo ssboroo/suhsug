@@ -13,7 +13,8 @@ export async function GET() {
     const totals = await db.lotteryTransaction.aggregate({ where: { campaignId: campaign.id }, _sum: { ticketCount: true } });
     const tickets = totals._sum.ticketCount ?? 0;
     const target = campaign.targetTicketCount;
-    return NextResponse.json({ campaign, progress: target && target > 0 ? { percent: Math.min(100, Math.round((tickets / target) * 100)) } : null }, { headers: { "Cache-Control": "no-store" } });
+    const publicCampaign = { title: campaign.title, description: campaign.description, heroImageUrl: campaign.heroImageUrl };
+    return NextResponse.json({ campaign: publicCampaign, progress: target && target > 0 ? { percent: Math.min(100, Math.round((tickets / target) * 100)) } : null }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return NextResponse.json({ error: "Түр алдаа гарлаа." }, { status: 503 });
   }
