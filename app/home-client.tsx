@@ -36,21 +36,18 @@ export default function HomePage() {
         if (!active || !data?.campaigns) return;
         const nextCampaigns = data.campaigns as typeof campaigns;
         setCampaigns(nextCampaigns);
-        setCampaign(previous => {
-          const selected = nextCampaigns.find(item => item.campaign.id === previous?.id) || nextCampaigns[0];
-          if (selected) {
-            setProgress(selected.progress);
-            setStats(selected.stats);
-            return selected.campaign;
-          }
-          return previous;
-        });
+        const selected = nextCampaigns.find(item => item.campaign.id === campaign?.id) || nextCampaigns[0];
+        if (selected) {
+          setCampaign(selected.campaign);
+          setProgress(selected.progress);
+          setStats(selected.stats);
+        }
       } catch { /* Keep the last successfully loaded public figures visible. */ }
     };
     refreshCampaigns();
     const interval = window.setInterval(refreshCampaigns, 30000);
     return () => { active = false; window.clearInterval(interval); };
-  }, []);
+  }, [campaign?.id]);
 
   async function searchPhone(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
