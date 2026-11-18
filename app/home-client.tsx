@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Award, ChevronRight, Search, ShieldCheck } from "lucide-react";
+import { Award, ArrowDown, ArrowUpRight, CheckCircle2, ChevronRight, CircleHelp, Search, ShieldCheck, Sparkles } from "lucide-react";
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
 type PublicCampaign = { title: string; description: string; heroImageUrl: string | null };
@@ -22,7 +22,7 @@ export default function HomePage() {
 
   async function searchPhone(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!/^\d{8}$/.test(phone)) { setMessage("Утасны дугаар 8 оронтой байх шаардлагатай."); return; }
+    if (!/^\\d{8}$/.test(phone)) { setMessage("Утасны дугаар 8 оронтой байх шаардлагатай."); return; }
     setLoading(true); setMessage(""); setResult(null);
     try {
       const response = await fetch("/api/search?phone=" + encodeURIComponent(phone), { cache: "no-store" });
@@ -35,58 +35,87 @@ export default function HomePage() {
   }
 
   const heroStyle = campaign?.heroImageUrl ? {
-    backgroundImage: `linear-gradient(90deg,rgba(10,22,28,.93) 0%,rgba(10,22,28,.72) 42%,rgba(10,22,28,.1) 100%),url("${campaign.heroImageUrl}")`
+    backgroundImage: `linear-gradient(90deg,rgba(7,18,25,.94) 0%,rgba(7,18,25,.78) 46%,rgba(7,18,25,.22) 100%),url("${campaign.heroImageUrl}")`
   } : undefined;
 
   return <main className="site-shell">
     <header className="topbar">
-      <a href="#" className="brand" style={{textDecoration:"none",color:"inherit"}}><span className="brand-mark">ᠮ</span><span>СҮХБААТАРЫН ХУРД</span></a>
-      <nav className="navlinks"><a href="#home">НҮҮР</a><a href="#search">ЭРХЭЭ ШАЛГАХ</a><a href="#about">БИДНИЙ ТУХАЙ</a></nav>
-      <a href="#search" style={{color:"#f0d79f",fontSize:12,textDecoration:"none",fontWeight:800}}>СУГАЛАА ШАЛГАХ ↗</a>
+      <a href="#home" className="brand" aria-label="Сүхбаатарын хурд нүүр хуудас">
+        <span className="brand-mark"><span>ᠮ</span></span>
+        <span className="brand-name"><strong>СҮХБААТАРЫН ХУРД</strong><small>МОРИНЫ СУГАЛАА</small></span>
+      </a>
+      <nav className="navlinks" aria-label="Үндсэн цэс">
+        <a href="#home" className="active">НҮҮР</a><a href="#search">ЭРХЭЭ ШАЛГАХ</a><a href="#about">МЭДЭЭЛЭЛ</a>
+      </nav>
+      <a href="#search" className="header-cta">СУГАЛАА ШАЛГАХ <ArrowUpRight size={16}/></a>
     </header>
 
     <section className="hero" id="home" style={heroStyle}>
+      <div className="hero-overlay" />
       <div className="hero-content">
-        <div className="eyebrow">ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ</div>
-        <h1>{campaign?.title ?? "СҮХБААТАРЫН ХУРД"}</h1>
-        <div className="hero-sub">МОРИНЫ СУГАЛАА</div>
-        <div className="hero-rule" />
-        <p className="hero-copy">{campaign?.description || "Монгол түмний хийморь болсон хурдан хүлгийн уралдаан. Сугалаанд оролцох эрхээ утасны дугаараараа хялбархан шалгаарай."}</p>
-        <button className="primary-btn" onClick={() => document.getElementById("search")?.scrollIntoView({behavior:"smooth"})}>СУГАЛААНЫ ЭРХЭЭ ШАЛГАХ <ChevronRight size={17} style={{display:"inline",verticalAlign:"middle"}} /></button>
+        <div className="eyebrow"><span className="eyebrow-line"/> ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ <span className="eyebrow-line"/></div>
+        <p className="hero-overline">МОНГОЛЫН ХУРДНЫ ӨВ СОЁЛ</p>
+        <h1>{campaign?.title ?? "СҮХБААТАРЫН"}<span>{campaign?.title ? "" : "ХУРД"}</span></h1>
+        <div className="hero-subtitle"><span/> МОРИНЫ СУГАЛАА <span/></div>
+        <p className="hero-copy">{campaign?.description || "Монгол түмний хийморь болсон хурдан хүлгийн уралдаанд тавтай морил. Сугалаанд бүртгүүлсэн эрхээ утасны дугаараараа хялбар, шуурхай шалгаарай."}</p>
+        <a className="primary-btn" href="#search">СУГАЛААНЫ ЭРХЭЭ ШАЛГАХ <ChevronRight size={18}/></a>
+        <div className="hero-footnote"><ShieldCheck size={16}/> Бүртгэлийн мэдээллээ албан ёсны системээс шалгана</div>
+      </div>
+      <div className="hero-side-label">ХУРД · ХИЙМОРЬ · БАХАРХАЛ</div>
+      <a href="#search" className="scroll-cue"><span>ДООШ ГҮЙЛГЭХ</span><ArrowDown size={15}/></a>
+    </section>
+
+    <div className="ornament-divider"><span>ᠮ</span></div>
+
+    <section className="lookup-section section" id="search">
+      <div className="section-inner lookup-layout">
+        <div className="lookup-intro">
+          <div className="section-kicker"><span/> ТАНЫ ХИЙМОРЬ ӨӨДӨӨ</div>
+          <h2 className="section-title">Сугалааны эрхээ<br/><em>шалгах</em></h2>
+          <p className="section-desc">Бүртгүүлсэн утасны дугаараа оруулснаар таны сугалааны эрхийн мэдээлэл шууд харагдана.</p>
+          <div className="lookup-assurance"><span className="assurance-icon"><ShieldCheck size={20}/></span><span><strong>Найдвартай шалгалт</strong><small>Зөвхөн таны дугаарт бүртгэлтэй мэдээлэл</small></span></div>
+        </div>
+        <div className="lookup-panel">
+          <div className="panel-topline"><span>ЭРХ ШАЛГАХ ХЭСЭГ</span><span className="live-dot">ШУУРХАЙ ХАЙЛТ</span></div>
+          <div className="panel-heading"><div className="panel-icon"><Search size={21}/></div><div><h3>Утасны дугаараа оруулна уу</h3><p>8 оронтой дугаар ашиглана уу</p></div></div>
+          <form className="search-card" onSubmit={searchPhone}>
+            <label className="search-label" htmlFor="phone">ТАНЫ УТАСНЫ ДУГААР</label>
+            <div className="phone-field"><span className="country-code">+976</span><input id="phone" className="phone-input" type="tel" inputMode="numeric" autoComplete="tel-national" maxLength={8} placeholder="9911 2233" value={phone} onChange={e=>{setPhone(e.target.value.replace(/\\D/g,"").slice(0,8));setMessage("");setResult(null);}} /></div>
+            <div className="input-hint"><span>Зөвхөн тоо оруулна уу</span><span>{phone.length}/8</span></div>
+            <button className="search-submit" type="submit" disabled={phone.length!==8 || loading}><Search size={18}/>{loading ? "ШАЛГАЖ БАЙНА..." : "СУГАЛААГАА ШАЛГАХ"}<ChevronRight size={17}/></button>
+            {message && <div role="status" className={message.includes("бүртгэл олдсонгүй") ? "notice notice-warn" : "notice notice-error"}>{message}</div>}
+          </form>
+          {result && result.length>0 && <div className="result-card" aria-live="polite">
+            <div className="result-heading"><span className="result-check"><CheckCircle2 size={18}/></span><div><strong>БҮРТГЭЛ ОЛДЛОО</strong><small>Таны хайлтын үр дүн</small></div></div>
+            {result.map((r,i)=><div className="result-record" key={i}>
+              <div className="result-row"><span>Гүйлгээний огноо</span><strong>{new Date(r.transactionDate).toLocaleDateString("mn-MN")}</strong></div>
+              <div className="result-row"><span>Утасны дугаар</span><strong>{r.phoneNumber}</strong></div>
+              <div className="result-ticket"><span>Сугалааны эрхийн тоо</span><strong>{r.ticketCount}<small>ЭРХ</small></strong></div>
+            </div>)}
+          </div>}
+          <div className="privacy-note"><ShieldCheck size={14}/> Таны мэдээллийг зөвхөн шалгах зорилгоор ашиглана.</div>
+        </div>
       </div>
     </section>
 
-    <div className="pattern-band" />
-    <section className="section" id="search">
+    <section className="steps-section" id="about">
       <div className="section-inner">
-        <div className="section-kicker">ТАНЫ ХИЙМОРЬ ӨӨДӨӨ</div>
-        <h2 className="section-title">Сугалааны эрхээ шалгах</h2>
-        <p className="section-desc">Сугалаанд бүртгүүлсэн 8 оронтой утасны дугаараа оруулж эрхийн мэдээллээ шалгана уу.</p>
-        <form className="search-card" onSubmit={searchPhone}>
-          <label className="search-label" htmlFor="phone">УТАСНЫ ДУГААР</label>
-          <input id="phone" className="phone-input" type="tel" inputMode="numeric" autoComplete="tel" maxLength={8} placeholder="Жишээ: 99112233" value={phone} onChange={e=>{setPhone(e.target.value.replace(/\D/g,"").slice(0,8));setMessage("");setResult(null);}} />
-          <button className="search-submit" type="submit" disabled={phone.length!==8 || loading}><Search size={17} style={{display:"inline",verticalAlign:"middle",marginRight:8}}/>{loading ? "ШАЛГАЖ БАЙНА..." : "СУГАЛААГАА ШАЛГАХ"}</button>
-          {message && <p role="status" style={{fontSize:13,color:result===null && message.includes("бүртгэл олдсонгүй")?"#9b633e":"#a34235",margin:"14px 0 0"}}>{message}</p>}
-        </form>
-        {result && result.length>0 && <div className="result-card" aria-live="polite">
-          <div className="status"><ShieldCheck size={15} style={{display:"inline",verticalAlign:"middle",marginRight:6}}/> БҮРТГЭЛ ОЛДЛОО</div>
-          {result.map((r,i)=><div key={i} style={{borderBottom:i===result.length-1?"1px solid #ffffff20":0,paddingBottom:10,marginBottom:4}}>
-            <div className="result-row"><span>Гүйлгээний огноо</span><strong>{new Date(r.transactionDate).toLocaleDateString("mn-MN")}</strong></div>
-            <div className="result-row"><span>Утасны дугаар</span><strong>{r.phoneNumber}</strong></div>
-            <div className="result-row"><span>Сугалааны эрхийн тоо</span><strong className="result-count">{r.ticketCount} эрх</strong></div>
-          </div>)}
-        </div>}
+        <div className="section-kicker centered"><span/> ХЯЛБАР · ШУУРХАЙ · ОЙЛГОМЖТОЙ <span/></div>
+        <h2 className="section-title centered">Эрхээ шалгах <em>3 алхам</em></h2>
+        <p className="section-desc centered">Сугалааны эрхийн мэдээллээ хэдхэн хормын дотор шалгаарай.</p>
+        <div className="steps-grid">
+          <article className="step-card"><span className="step-number">01</span><div className="step-icon"><span>ᠮ</span></div><h3>Дугаараа оруулах</h3><p>Сугалаанд бүртгүүлсэн 8 оронтой утасны дугаараа бичнэ.</p></article>
+          <article className="step-card"><span className="step-number">02</span><div className="step-icon"><Search size={25}/></div><h3>Мэдээллээ шалгах</h3><p>“Сугалаагаа шалгах” товчийг дарж бүртгэлээ хайна.</p></article>
+          <article className="step-card"><span className="step-number">03</span><div className="step-icon"><Award size={25}/></div><h3>Эрхийн тоогоо харах</h3><p>Бүртгэл олдвол огноо болон сугалааны эрхийн тоогоо харна.</p></article>
+        </div>
       </div>
     </section>
-    <div className="pattern-band" />
-    <section className="section" id="about" style={{background:"#eee7d9"}}>
-      <div className="section-inner" style={{textAlign:"center"}}>
-        <Award size={30} color="#a77b37" style={{margin:"0 auto 14px"}}/>
-        <div className="section-kicker">МОНГОЛЫН ХИЙМОРЬ</div>
-        <h2 className="section-title">Хурдны өлзий дэлгэрэх болтугай</h2>
-        <p className="section-desc">Монгол адууны хийморь, уяачдын хөдөлмөр, наадмын бахархлыг эрхэмлэн дээдэлнэ.</p>
-      </div>
-    </section>
-    <footer className="footer"><div className="brand"><span className="brand-mark">ᠮ</span><span>СҮХБААТАРЫН ХУРД</span></div><p>МОРИНЫ СУГАЛАА · Монгол өв соёл, хурдны хийморь</p><small>© {new Date().getFullYear()} Сүхбаатарын хурд. Бүх эрх хуулиар хамгаалагдсан.</small></footer>
+
+    <section className="closing-band"><div className="closing-ornament">ᠮ</div><p>МОНГОЛЫН ХИЙМОРЬ · ХУРДНЫ БАХАРХАЛ</p><h2>Хурдны өлзий дэлгэрэх болтугай</h2><a href="#search">ЭРХЭЭ ОДОО ШАЛГАХ <ArrowUpRight size={16}/></a></section>
+
+    <footer className="footer">
+      <div className="footer-main"><div className="brand"><span className="brand-mark"><span>ᠮ</span></span><span className="brand-name"><strong>СҮХБААТАРЫН ХУРД</strong><small>МОРИНЫ СУГАЛАА</small></span></div><p>Монгол өв соёл, хурдны хийморийг эрхэмлэн дээдэлье.</p><a href="#home">ДЭЭШ БУЦАХ ↑</a></div>
+      <div className="footer-bottom"><span>© {new Date().getFullYear()} Сүхбаатарын хурд. Бүх эрх хуулиар хамгаалагдсан.</span><span>МОНГОЛ УЛС</span></div>
+    </footer>
   </main>;
 }
