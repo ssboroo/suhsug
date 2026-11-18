@@ -1,8 +1,8 @@
 import * as XLSX from "xlsx";
 import { createHash } from "node:crypto";
 
-export type SheetPreview = { name: string; rowCount: number; headers: string[]; suggestedPhoneColumn: number };
-export type PhoneParse = { phone: string | null; reason: "EMPTY" | "INVALID" | "MULTIPLE" };
+export type SheetPreview = { name: string; rowCount: number; headers: string[]; suggestedPhoneColumn: number; sampleRows: string[][] };
+export type PhoneParse = { phone: string | null; reason: "EMPTY" | "INVALID" | "MULTIPLE" | "OK" };
 
 export function sha256(buffer: Buffer) {
   return createHash("sha256").update(buffer).digest("hex");
@@ -18,7 +18,7 @@ export function inspectWorkbook(workbook: XLSX.WorkBook): SheetPreview[] {
     const rows = XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1, raw: false, defval: "", blankrows: true });
     const headers = (rows[0] ?? []).map(value => String(value ?? "").trim());
     const suggested = headers.findIndex(value => /phone|mobile|утас|дугаар/i.test(value));
-    return { name, rowCount: rows.length, headers, suggestedPhoneColumn: suggested >= 0 ? suggested + 1 : 1 };
+    return { name, rowCount: rows.length, headers, suggestedPhoneColumn: suggested >= 0 ? suggested + 1 : 1, sampleRows: rows.slice(0, 6).map(row => row.map(value => String(value ?? "").slice(0, 100))) };
   });
 }
 
