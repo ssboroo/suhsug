@@ -100,18 +100,24 @@ export async function POST(request: NextRequest) {
     rejected: errors.length, errors: errors.slice(0, 30)
   }, { status: 400 });
 
-  const previous = mode === "REPLACE" ? await db.lotteryTransaction.findMany({ where: { campaignId: campaign.id }, select: { transactionId: true, transactionDate: true, phoneNumber: true, ticketCount: true } }) : [];
-  const existingIds = mode === "APPEND" ? new Set((await db.lotteryTransaction.findMany({
-    where: { campaignId: campaign.id, transactionId: { in: valid.map(v => v.transactionId) } }, select: { transactionId: true }
-  })).map(v => v.transactionId)) : new Set<string>();
-  const fresh = valid.filter(v => !existingIds.has(v.transactionId));
-  duplicates += valid.length - fresh.length;
-  if (fresh.length === 0) return NextResponse.json({ error: "Шинэ гүйлгээ алга. Бүх мөр өмнө нь импортлогдсон байна.", duplicates }, { status: 409 });
+  const result = await db.$transaction(async tx => {
+    // Serialize imports for this campaign so concurrent APPEND/REPLACE requests cannot race.
+    await tx.$queryRaw`SELECT "id" FROM "Campaign" WHERE "id" = ${campaign.id} FOR UPDATE`;
+    const previous = mode === "REPLACE" ? await tx.lotteryTransaction.findMany({
+      where: { campaignId: campaign.id },
+      select: { transactionId: true, transactionDate: true, phoneNumber: true, ticketCount: true }
+    }) : [];
+    const existingIds = mode === "APPEND" ? new Set((await tx.lotteryTransaction.findMany({
+      where: { campaignId: campaign.id, transactionId: { in: valid.map(v => v.transactionId) } },
+      select: { transactionId: true }
+    })).map(v => v.transactionId)) : new Set<string>();
+    const fresh = valid.filter(v => !existingIds.has(v.transactionId));
+    const duplicateCount = duplicates + valid.length - fresh.length;
+    if (fresh.length === 0) return { noNewRows: true as const, duplicates: duplicateCount };
 
-  const batch = await db.$transaction(async tx => {
     const created = await tx.importBatch.create({ data: {
       campaignId: campaign.id, fileName: file.name, mode, status: "COMPLETED",
-      totalRows: Math.max(0, sheet.rowCount - 1), importedRows: fresh.length, rejectedRows: errors.length, duplicateRows: duplicates,
+      totalRows: Math.max(0, sheet.rowCount - 1), importedRows: fresh.length, rejectedRows: errors.length, duplicateRows: duplicateCount,
       snapshot: mode === "REPLACE" ? previous.map(p => ({ ...p, transactionDate: p.transactionDate.toISOString() })) : undefined
     }});
     if (mode === "REPLACE") await tx.lotteryTransaction.deleteMany({ where: { campaignId: campaign.id } });
@@ -121,7 +127,11 @@ export async function POST(request: NextRequest) {
     });
     if (errors.length) await tx.importError.createMany({ data: errors.map(e => ({ batchId: created.id, ...e })) });
     await tx.adminAuditLog.create({ data: { action: "EXCEL_IMPORT", details: { fileName: file.name, mode, imported: fresh.length, rejected: errors.length } } });
-    return created;
-  });
-  return NextResponse.json({ ok: true, batchId: batch.id, imported: fresh.length, rejected: errors.length, duplicates, errors: errors.slice(0, 30) });
+    return { noNewRows: false as const, batchId: created.id, imported: fresh.length, duplicates: duplicateCount };
+  }, { isolationLevel: "Serializable", timeout: 60_000 });
+
+  if (result.noNewRows) return NextResponse.json({
+    error: "Шинэ гүйлгээ алга. Бүх мөр өмнө нь импортлогдсон байна.", duplicates: result.duplicates
+  }, { status: 409 });
+  return NextResponse.json({ ok: true, batchId: result.batchId, imported: result.imported, rejected: errors.length, duplicates: result.duplicates, errors: errors.slice(0, 30) });
 }
