@@ -79,23 +79,26 @@ export async function POST(request: NextRequest) {
     valid.push({ transactionId, transactionDate: date, phoneNumber: phone, ticketCount: count });
   }
 
-  const previous = await db.lotteryTransaction.findMany({ where: { campaignId: campaign.id }, select: { transactionId: true, transactionDate: true, phoneNumber: true, ticketCount: true } });
+  const previous = mode === "REPLACE" ? await db.lotteryTransaction.findMany({ where: { campaignId: campaign.id }, select: { transactionId: true, transactionDate: true, phoneNumber: true, ticketCount: true } }) : [];
+  const existingIds = mode === "APPEND" ? new Set((await db.lotteryTransaction.findMany({
+    where: { campaignId: campaign.id, transactionId: { in: valid.map(v => v.transactionId) } },
+    select: { transactionId: true }
+  })).map(v => v.transactionId)) : new Set<string>();
+  const fresh = valid.filter(v => !existingIds.has(v.transactionId));
+  duplicates += valid.length - fresh.length;
   const batch = await db.$transaction(async tx => {
     const created = await tx.importBatch.create({ data: {
       campaignId: campaign.id, fileName: file.name, mode, status: "COMPLETED",
-      totalRows: Math.max(0, sheet.rowCount - 1), importedRows: valid.length, rejectedRows: errors.length, duplicateRows: duplicates,
+      totalRows: Math.max(0, sheet.rowCount - 1), importedRows: fresh.length, rejectedRows: errors.length, duplicateRows: duplicates,
       snapshot: mode === "REPLACE" ? previous.map(p => ({ ...p, transactionDate: p.transactionDate.toISOString() })) : undefined
     }});
     if (mode === "REPLACE") await tx.lotteryTransaction.deleteMany({ where: { campaignId: campaign.id } });
-    for (const item of valid) {
-      try {
-        await tx.lotteryTransaction.create({ data: { ...item, campaignId: campaign.id, importBatchId: created.id } });
-      } catch {
-        duplicates++;
-      }
-    }
+    if (fresh.length) await tx.lotteryTransaction.createMany({
+      data: fresh.map(item => ({ ...item, campaignId: campaign.id, importBatchId: created.id })),
+      skipDuplicates: true
+    });
     if (errors.length) await tx.importError.createMany({ data: errors.map(e => ({ batchId: created.id, ...e })) });
-    await tx.adminAuditLog.create({ data: { action: "EXCEL_IMPORT", details: { fileName: file.name, mode, imported: valid.length, rejected: errors.length } } });
+    await tx.adminAuditLog.create({ data: { action: "EXCEL_IMPORT", details: { fileName: file.name, mode, imported: fresh.length, rejected: errors.length } } });
     return created;
   });
   return NextResponse.json({ ok: true, batchId: batch.id, imported: valid.length, rejected: errors.length, duplicates, errors: errors.slice(0, 30) });
