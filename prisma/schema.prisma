@@ -48,11 +48,15 @@ model LotteryTransaction {
   phoneNumber     String
   ticketCount     Int
   importBatchId   String?
+  sourceFileHash  String?
+  sourceSheet     String?
+  sourceRow       Int?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   campaign        Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   importBatch     ImportBatch? @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
   @@unique([campaignId, transactionId])
+  @@unique([campaignId, sourceFileHash, sourceSheet, sourceRow])
   @@index([campaignId, phoneNumber])
   @@index([campaignId, transactionDate])
 }
@@ -61,6 +65,8 @@ model ImportBatch {
   id            String   @id @default(cuid())
   campaignId    String
   fileName      String
+  fileHash      String?
+  sheetName     String?
   mode          String
   status        String   @default("COMPLETED")
   totalRows     Int      @default(0)
@@ -72,6 +78,7 @@ model ImportBatch {
   campaign      Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   transactions LotteryTransaction[]
   errors        ImportError[]
+  @@index([campaignId, fileHash, sheetName])
   @@index([campaignId, createdAt])
 }
 
