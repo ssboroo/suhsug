@@ -13,8 +13,6 @@ jobs:
       ADMIN_SESSION_SECRET: ci-only-secret-value-with-at-least-32-characters
       ADMIN_USERNAME: ci-admin
       ADMIN_PASSWORD_HASH: $2b$12$C6UzMDM.H6dfI/f/IKcEe.6b3e9X6qVqV3gV0YxJz3p9KqGxY9zVxK
-      UPSTASH_REDIS_REST_URL: https://example.upstash.io
-      UPSTASH_REDIS_REST_TOKEN: ci-token
     services:
       postgres:
         image: postgres:16
@@ -34,8 +32,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-      - run: npm install
+      - run: npm install --no-audit --no-fund
       - run: npx prisma generate
       - run: npx prisma migrate deploy
       - run: npm run lint
