@@ -81,6 +81,12 @@ export default function HomePage() {
       </section>}
       <section className="home-v2-hero" id="home" style={heroStyle}>
         <div className="home-v2-shade"/>
+        <div className="home-v2-eagle-ornament" aria-hidden="true">
+          <svg viewBox="0 0 420 180" role="presentation">
+            <path d="M210 145c-22-18-40-39-55-65-30 18-65 24-112 9 26 28 53 42 91 43-30 12-57 13-88 5 39 31 89 35 132 10l32 35 32-35c43 25 93 21 132-10-31 8-58 7-88-5 38-1 65-15 91-43-47 15-82 9-112-9-15 26-33 47-55 65z" fill="currentColor"/>
+            <path d="M210 27l-15 31 15 18 15-18zM192 76l18 18 18-18" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
         <div className="home-v2-inner">
           <div className="home-v2-story">
             <div className="home-v2-kicker"><span/> {campaign?.heroEyebrow || "ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ"}</div>
