@@ -78,7 +78,6 @@ export default function HomePage() {
     <main className="home-v2">
       <header className="home-v2-header">
         <a href="#home" className="home-v2-brand" aria-label="Сүхбаатарын хурд нүүр хуудас">
-          <span className="home-v2-emblem" aria-hidden="true"><svg viewBox="0 0 48 48" role="img"><path d="M10 34c4-2 6-6 7-11l-3-7 7 2 4-5 4 2 2 7 8 5-4 3-5-2-2 7-5 4-3-3 2-6-6 1-2 6-4 1 1-4-4 2z" fill="currentColor"/><path d="M22 16l-1-7 5 4M29 14l5-5-1 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
           <span><strong>СҮХБААТАРЫН ХУРД</strong><small>СУГАЛААТ ХУДАЛДАА</small></span>
         </a>
         <nav className="home-v2-nav" aria-label="Үндсэн цэс">
@@ -106,12 +105,6 @@ export default function HomePage() {
       </section>}
       <section className="home-v2-hero" id="home" style={heroStyle}>
         <div className="home-v2-shade"/>
-        <div className="home-v2-eagle-ornament" aria-hidden="true">
-          <svg viewBox="0 0 420 180" role="presentation">
-            <path d="M210 145c-22-18-40-39-55-65-30 18-65 24-112 9 26 28 53 42 91 43-30 12-57 13-88 5 39 31 89 35 132 10l32 35 32-35c43 25 93 21 132-10-31 8-58 7-88-5 38-1 65-15 91-43-47 15-82 9-112-9-15 26-33 47-55 65z" fill="currentColor"/>
-            <path d="M210 27l-15 31 15 18 15-18zM192 76l18 18 18-18" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
         <div className="home-v2-inner">
           <div className="home-v2-story">
             <div className="home-v2-kicker"><span/> {campaign?.heroEyebrow || "ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ"}</div>
@@ -197,28 +190,19 @@ export default function HomePage() {
       <section className="home-v2-inspiration" aria-labelledby="inspiration-title">
         <div className="home-v2-inspiration-head">
           <div><span className="home-v2-section-kicker">МОНГОЛ ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ</span><h2 id="inspiration-title">Сугалааны <em>загварууд</em></h2><p>Дараах нь нэр, зураг, өнгө төрхийн жишээ загварууд юм. Бодит сугалаа биш.</p></div>
-          <div className="home-v2-collection-seal" aria-label="2026 Horse Collection">
-            <svg viewBox="0 0 100 100" role="img" aria-label="Монгол хүлгийн сүлд">
-              <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="1.4"/>
-              <circle cx="50" cy="50" r="39" fill="none" stroke="currentColor" strokeWidth=".7" strokeDasharray="2 3"/>
-              <path d="M27 62c5-5 8-12 9-22l-4-10 12 4 7-8 8 3 4 12 12 7-7 5-8-3-3 12-8 7-5-5 3-9-9 2-3 9-6 1 2-6-7 3z" fill="currentColor"/>
-              <path d="M44 34l-1-12 8 8M58 30l9-9-2 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M22 76h56" stroke="currentColor" strokeWidth="1"/>
-            </svg>
-            <span>2026</span><small>HORSE COLLECTION</small>
-          </div>
+          <div className="home-v2-collection-edition"><span>2026</span><small>PREMIUM HORSE RACING EDITION</small></div>
         </div>
         <div className="home-v2-inspiration-grid">
           <article className="home-v2-inspiration-card">
-            <div className="home-v2-inspiration-photo photo-wind"><span>ЗАГВАР 01</span><svg className="home-v2-horse-mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" strokeWidth="1.2"/><path d="M16 43c4-4 6-9 7-16l-3-7 9 3 5-6 6 2 3 9 8 5-5 4-6-2-2 8-6 5-4-4 2-6-7 1-2 7-5 1 1-4-5 2zM29 23l-1-8 6 5M39 21l6-6-1 9" fill="currentColor"/></svg><b>ТАЛЫН САЛХИ</b></div>
+            <div className="home-v2-inspiration-photo photo-wind"><span>ЗАГВАР 01</span><b>ТАЛЫН САЛХИ</b></div>
             <div className="home-v2-inspiration-info"><small>ХУРДНЫ ХИЙМОРЬ</small><h3>Талын салхи</h3><p>Уудам талд туурай тамгалах хурдан хүлгийн урам зориг.</p></div>
           </article>
           <article className="home-v2-inspiration-card">
-            <div className="home-v2-inspiration-photo photo-golden"><span>ЗАГВАР 02</span><svg className="home-v2-horse-mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" strokeWidth="1.2"/><path d="M16 43c4-4 6-9 7-16l-3-7 9 3 5-6 6 2 3 9 8 5-5 4-6-2-2 8-6 5-4-4 2-6-7 1-2 7-5 1 1-4-5 2zM29 23l-1-8 6 5M39 21l6-6-1 9" fill="currentColor"/></svg><b>ХҮЛЭГТ ХИЙМОРЬ</b></div>
+            <div className="home-v2-inspiration-photo photo-golden"><span>ЗАГВАР 02</span><b>ХҮЛЭГТ ХИЙМОРЬ</b></div>
             <div className="home-v2-inspiration-info"><small>МОНГОЛ ӨВ СОЁЛ</small><h3>Хүлэгт хийморь</h3><p>Монгол адууны сүр хүч, хийморийг илэрхийлсэн загвар.</p></div>
           </article>
           <article className="home-v2-inspiration-card">
-            <div className="home-v2-inspiration-photo photo-race"><span>ЗАГВАР 03</span><svg className="home-v2-horse-mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" strokeWidth="1.2"/><path d="M16 43c4-4 6-9 7-16l-3-7 9 3 5-6 6 2 3 9 8 5-5 4-6-2-2 8-6 5-4-4 2-6-7 1-2 7-5 1 1-4-5 2zM29 23l-1-8 6 5M39 21l6-6-1 9" fill="currentColor"/></svg><b>ИХ ХУРДНЫ ЭЗЭН</b></div>
+            <div className="home-v2-inspiration-photo photo-race"><span>ЗАГВАР 03</span><b>ИХ ХУРДНЫ ЭЗЭН</b></div>
             <div className="home-v2-inspiration-info"><small>ИХ УРАЛДААН</small><h3>Их хурдны эзэн</h3><p>Уралдааны догдлол, түрүүлж ирэх агшныг мэдрүүлнэ.</p></div>
           </article>
         </div>
