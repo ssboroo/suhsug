@@ -11,7 +11,7 @@ const MAX_ROWS = 50_000;
 
 export async function GET() {
   if (!(await isAdmin())) return NextResponse.json({ error: "Нэвтрэх шаардлагатай." }, { status: 401 });
-  const campaign = await db.campaign.findFirst({ where: { isActive: true }, select: { id: true } });
+  const campaign = campaignId ? await db.campaign.findUnique({ where: { id: campaignId }, select: { id: true } }) : await db.campaign.findFirst({ where: { isActive: true }, select: { id: true } });
   if (!campaign) return NextResponse.json({ imports: [] });
   const imports = await db.importBatch.findMany({
     where: { campaignId: campaign.id }, orderBy: { createdAt: "desc" }, take: 50,
@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
   const headerRow = Number(form.get("headerRow") ?? 1);
   const startRow = Number(form.get("startRow") ?? headerRow + 1);
   const phoneColumn = Number(form.get("phoneColumn") ?? 0);
+  const campaignId = String(form.get("campaignId") ?? "");
   if (!(file instanceof File) || !/\.(xlsx|xls)$/i.test(file.name)) return NextResponse.json({ error: "Зөвхөн .xlsx болон .xls файл оруулна уу." }, { status: 400 });
   if (!file.size || file.size > MAX_FILE_BYTES) return NextResponse.json({ error: "Файлын хэмжээ 1 byte–12MB байх ёстой." }, { status: 400 });
   if (!["APPEND", "REPLACE"].includes(mode)) return NextResponse.json({ error: "Импортын горим буруу байна." }, { status: 400 });
