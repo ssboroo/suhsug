@@ -22,7 +22,7 @@ Next.js 15 App Router, TypeScript, Tailwind CSS 4, PostgreSQL, Prisma, ExcelJS, 
 
 ## Production тохиргоо
 
-1. Node.js 20+ болон PostgreSQL 16 ашиглана.
+1. Node.js 20+ болон PostgreSQL 16 ашиглана. Excel импортын 12MB request body-г хүлээн авах hosting сонгоно (serverless платформууд request body-д бага хязгаар тавьж болно).
 2. Environment variables тохируулна:
    - `DATABASE_URL` — production PostgreSQL connection string.
    - `ADMIN_USERNAME` — админ нэвтрэх нэр.
@@ -38,6 +38,7 @@ Next.js 15 App Router, TypeScript, Tailwind CSS 4, PostgreSQL, Prisma, ExcelJS, 
 7. Build: `npm run build`; start: `npm run start`.
 8. `/api/health` endpoint-оор database холболтыг шалгана.
 9. PostgreSQL автомат backup/PITR идэвхжүүлж, сэргээх туршилт хийнэ.
+10. S3/R2 bucket-д public read/CDN domain тохируулж, upload key-г зөвхөн серверийн environment-д хадгална.
 
 Админ нууц үгийн hash үүсгэх:
 ```bash
@@ -69,4 +70,4 @@ GitHub Actions нь push болон pull request бүрт PostgreSQL service д�
 - Бодит Excel файлууд болон олон хэрэглэгчийн ачааллын тест хийх.
 - Facebook Open Graph зурагт өөрийн эрхтэй зураг ашиглах.
 
-Production deployment нь environment тохиргоо болон бодит өгөгдлийн QA дууссаны дараа л бэлэн гэж тооцогдоно.
+Production deployment нь environment тохиргоо болон бодит өгөгдлийн QA дууссаны дараа л бэлэн гэж тооцогдоно. Vercel ашиглавал serverless request body-ийн хэмжээний хязгаарыг харгалзан Excel upload-ийн дээд хэмжээг бууруулах эсвэл тусдаа direct-upload урсгал ашиглах шаардлагатай.
