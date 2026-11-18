@@ -38,7 +38,6 @@ export default function HomePage() {
 
   async function shareCampaign() {
     const url = window.location.href.split("#")[0];
-    const title = campaign?.title || "Сүхбаатарын хурд — Сугалаат худалдаа";
     const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url);
     window.open(shareUrl, "_blank", "noopener,noreferrer,width=720,height=620");
   }
@@ -141,7 +140,7 @@ export default function HomePage() {
     <section className="closing-band"><div className="closing-ornament">ᠮ</div><p>МОНГОЛЫН ХИЙМОРЬ · ХУРДНЫ БАХАРХАЛ</p><h2>Хурдны өлзий дэлгэрэх болтугай</h2><a href="#search">ЭРХЭЭ ОДОО ШАЛГАХ <ArrowUpRight size={16}/></a></section>
 
     <footer className="footer">
-      <div className="footer-main"><div className="brand"><span className="brand-mark"><span>ᠮ</span></span><span className="brand-name"><strong>СҮХБААТАРЫН ХУРД</strong><small>МОРИНЫ СУГАЛАА</small></span></div><p>Монгол өв соёл, хурдны хийморийг эрхэмлэн дээдэлье.</p><a href="#home">ДЭЭШ БУЦАХ ↑</a></div>
+      <div className="footer-main"><div className="brand"><span className="brand-mark"><span>ᠮ</span></span><span className="brand-name"><strong>СҮХБААТАРЫН ХУРД</strong><small>СУГАЛААТ ХУДАЛДАА</small></span></div><p>Монгол өв соёл, хурдны хийморийг эрхэмлэн дээдэлье.</p><a href="#home">ДЭЭШ БУЦАХ ↑</a></div>
       <div className="footer-bottom"><span>© {new Date().getFullYear()} Сүхбаатарын хурд. Бүх эрх хуулиар хамгаалагдсан.</span><span>МОНГОЛ УЛС</span></div>
     </footer>
   </main>;
