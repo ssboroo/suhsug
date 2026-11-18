@@ -1,15 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Award, ChevronRight, Search, ShieldCheck } from "lucide-react";
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
+type PublicCampaign = { title: string; description: string; heroImageUrl: string | null };
 
 export default function HomePage() {
   const [phone, setPhone] = useState("");
   const [result, setResult] = useState<Result[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [campaign, setCampaign] = useState<PublicCampaign | null>(null);
+
+  useEffect(() => {
+    fetch("/api/campaign/public", { cache: "no-store" })
+      .then(response => response.ok ? response.json() : null)
+      .then(data => { if (data?.campaign) setCampaign(data.campaign); })
+      .catch(() => undefined);
+  }, []);
 
   async function searchPhone(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -25,6 +34,10 @@ export default function HomePage() {
     finally { setLoading(false); }
   }
 
+  const heroStyle = campaign?.heroImageUrl ? {
+    backgroundImage: `linear-gradient(90deg,rgba(10,22,28,.93) 0%,rgba(10,22,28,.72) 42%,rgba(10,22,28,.1) 100%),url("${campaign.heroImageUrl}")`
+  } : undefined;
+
   return <main className="site-shell">
     <header className="topbar">
       <a href="#" className="brand" style={{textDecoration:"none",color:"inherit"}}><span className="brand-mark">ᠮ</span><span>СҮХБААТАРЫН ХУРД</span></a>
@@ -32,13 +45,13 @@ export default function HomePage() {
       <a href="#search" style={{color:"#f0d79f",fontSize:12,textDecoration:"none",fontWeight:800}}>СУГАЛАА ШАЛГАХ ↗</a>
     </header>
 
-    <section className="hero" id="home">
+    <section className="hero" id="home" style={heroStyle}>
       <div className="hero-content">
         <div className="eyebrow">ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ</div>
-        <h1>СҮХБААТАРЫН <span>ХУРД</span></h1>
+        <h1>{campaign?.title ?? "СҮХБААТАРЫН ХУРД"}</h1>
         <div className="hero-sub">МОРИНЫ СУГАЛАА</div>
         <div className="hero-rule" />
-        <p className="hero-copy">Монгол түмний хийморь болсон хурдан хүлгийн уралдаан. Сугалаанд оролцох эрхээ утасны дугаараараа хялбархан шалгаарай.</p>
+        <p className="hero-copy">{campaign?.description || "Монгол түмний хийморь болсон хурдан хүлгийн уралдаан. Сугалаанд оролцох эрхээ утасны дугаараараа хялбархан шалгаарай."}</p>
         <button className="primary-btn" onClick={() => document.getElementById("search")?.scrollIntoView({behavior:"smooth"})}>СУГАЛААНЫ ЭРХЭЭ ШАЛГАХ <ChevronRight size={17} style={{display:"inline",verticalAlign:"middle"}} /></button>
       </div>
     </section>
