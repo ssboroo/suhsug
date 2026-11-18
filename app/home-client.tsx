@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Award, ArrowDown, ArrowUpRight, CheckCircle2, ChevronRight, Search, ShieldCheck, Share2 } from "lucide-react";
 
 type Result = { transactionDate: string; phoneNumber: string; ticketCount: number };
-type PublicCampaign = { title: string; description: string; heroImageUrl: string | null; bankName: string | null; accountHolder: string | null; accountNumber: string | null; iban: string | null; facebookPageUrl: string | null };
+type PublicCampaign = { title: string; description: string; heroImageUrl: string | null; heroEyebrow:string|null; heroOverline:string|null; faqContent:string|null; stepsContent:string|null; closingTitle:string|null; footerDescription:string|null; bankName: string | null; accountHolder: string | null; accountNumber: string | null; iban: string | null; facebookPageUrl: string | null };
 type PublicProgress = { percent: number };
 
 export default function HomePage() {
@@ -42,7 +42,7 @@ export default function HomePage() {
     window.open(shareUrl, "_blank", "noopener,noreferrer,width=720,height=620");
   }
 
-  const heroStyle = campaign?.heroImageUrl ? {
+  const steps = (campaign?.stepsContent || "Дугаараа оруулах || Сугалаанд бүртгүүлсэн 8 оронтой утасны дугаараа бичнэ.\\nМэдээллээ шалгах || “Сугалаагаа шалгах” товчийг дарна.\\nЭрхийн тоогоо харах || Бүртгэл олдвол эрхийн тоогоо харна.").split("\\n").map(line=>line.split("||").map(part=>part.trim())).filter(parts=>parts.length>=2 && parts[0] && parts[1]).slice(0,3);\n  const faqs = (campaign?.faqContent || "Сугалаанд хэрхэн оролцох вэ? || Зохион байгуулагчийн нийтэлсэн нөхцөл, зааврыг дагана уу.\\nСугалааны эрхээ хэрхэн шалгах вэ? || 8 оронтой утасны дугаараа оруулж хайна уу.\\nМиний бүртгэл харагдахгүй байвал яах вэ? || Дугаараа шалгаад дахин хайна уу.\\nДанс болон IBAN мэдээллийг хаанаас харах вэ? || Албан ёсны дансны хэсгээс харна уу.\\nСугалааны талаар хаанаас лавлах вэ? || Доорх Facebook Page-ээр холбогдоно уу.").split("\\n").map(line=>line.split("||").map(part=>part.trim())).filter(parts=>parts.length>=2 && parts[0] && parts[1]).slice(0,12);\n\n  const heroStyle = campaign?.heroImageUrl ? {
     backgroundImage: `linear-gradient(90deg,rgba(7,18,25,.94) 0%,rgba(7,18,25,.78) 46%,rgba(7,18,25,.22) 100%),url("${campaign.heroImageUrl}")`
   } : undefined;
 
@@ -61,8 +61,8 @@ export default function HomePage() {
     <section className="hero" id="home" style={heroStyle}>
       <div className="hero-overlay" />
       <div className="hero-content">
-        <div className="eyebrow"><span className="eyebrow-line"/> ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ <span className="eyebrow-line"/></div>
-        <p className="hero-overline">МОНГОЛЫН ХУРДНЫ ӨВ СОЁЛ</p>
+        <div className="eyebrow"><span className="eyebrow-line"/> {campaign?.heroEyebrow || "ӨВ СОЁЛ · ХУРД · ХИЙМОРЬ"} <span className="eyebrow-line"/></div>
+        <p className="hero-overline">{campaign?.heroOverline || "МОНГОЛЫН ХУРДНЫ ӨВ СОЁЛ"}</p>
         <h1>СҮХБААТАРЫН<span>ХУРД</span></h1>
         <div className="hero-subtitle"><span/> СУГАЛААТ ХУДАЛДАА <span/></div>
         <p className="hero-copy">{campaign?.description || "Монгол түмний хийморь болсон хурдан хүлгийн уралдаанд тавтай морил. Сугалаанд бүртгүүлсэн эрхээ утасны дугаараараа хялбар, шуурхай шалгаарай."}</p>
@@ -130,9 +130,7 @@ export default function HomePage() {
         <h2 className="section-title centered">Эрхээ шалгах <em>3 алхам</em></h2>
         <p className="section-desc centered">Сугалааны эрхийн мэдээллээ хэдхэн хормын дотор шалгаарай.</p>
         <div className="steps-grid">
-          <article className="step-card"><span className="step-number">01</span><div className="step-icon"><span>ᠮ</span></div><h3>Дугаараа оруулах</h3><p>Сугалаанд бүртгүүлсэн 8 оронтой утасны дугаараа бичнэ.</p></article>
-          <article className="step-card"><span className="step-number">02</span><div className="step-icon"><Search size={25}/></div><h3>Мэдээллээ шалгах</h3><p>“Сугалаагаа шалгах” товчийг дарж бүртгэлээ хайна.</p></article>
-          <article className="step-card"><span className="step-number">03</span><div className="step-icon"><Award size={25}/></div><h3>Эрхийн тоогоо харах</h3><p>Бүртгэл олдвол огноо болон сугалааны эрхийн тоогоо харна.</p></article>
+          {steps.map((step,i)=><article className="step-card" key={i}><span className="step-number">0{i+1}</span><div className="step-icon">{i===0?<span>ᠮ</span>:i===1?<Search size={25}/>:<Award size={25}/>}</div><h3>{step[0]}</h3><p>{step[1]}</p></article>)}
         </div>
       </div>
     </section>
@@ -158,19 +156,15 @@ export default function HomePage() {
         <h2 className="section-title centered">Түгээмэл <em>асуулт, хариулт</em></h2>
         <p className="section-desc centered">Сугалаанд оролцох болон эрхээ шалгахтай холбоотой мэдээлэл.</p>
         <div className="faq-list">
-          <details className="faq-item"><summary>Сугалаанд хэрхэн оролцох вэ?</summary><p>Сугалааны зохион байгуулагчийн нийтэлсэн нөхцөл, зааврыг дагана уу. Төлбөр шилжүүлэх бол зөвхөн энэ хуудсанд нийтэлсэн албан ёсны дансны мэдээллийг ашиглаж, гүйлгээний утгыг зааврын дагуу бичнэ.</p></details>
-          <details className="faq-item"><summary>Сугалааны эрхээ хэрхэн шалгах вэ?</summary><p>“Сугалааны эрхээ шалгах” хэсэгт бүртгүүлсэн 8 оронтой утасны дугаараа оруулаад “Сугалаагаа шалгах” товчийг дарна. Бүртгэл олдвол гүйлгээний огноо болон эрхийн тоо харагдана.</p></details>
-          <details className="faq-item"><summary>Миний бүртгэл харагдахгүй байвал яах вэ?</summary><p>Утасны дугаараа зөв оруулсан эсэхээ шалгаад дахин хайна уу. Мөн гүйлгээ бүртгэгдэж, системд шинэчлэгдэх хугацаа шаардагдаж болно. Асуудал хэвээр байвал доорх Facebook хуудсаар холбогдоно уу.</p></details>
-          <details className="faq-item"><summary>Данс болон IBAN мэдээллийг хаанаас харах вэ?</summary><p>Энэ хэсэгт зөвхөн зохион байгуулагчийн нийтэлсэн сугалааны зориулалтын дансны мэдээлэл харагдана. Шилжүүлэг хийхийн өмнө данс эзэмшигчийн нэр, дугаарыг заавал тулгана уу.</p></details>
-          <details className="faq-item"><summary>Сугалааны талаар хаанаас лавлах вэ?</summary><p>Нүүр хуудасны доод хэсэгт байрлах албан ёсны Facebook Page холбоосоор холбогдоно уу.</p></details>
+          {faqs.map((faq,i)=><details className="faq-item" key={i}><summary>{faq[0]}</summary><p>{faq[1]}</p></details>)}
         </div>
       </div>
     </section>
 
-    <section className="closing-band"><div className="closing-ornament">ᠮ</div><p>МОНГОЛЫН ХИЙМОРЬ · ХУРДНЫ БАХАРХАЛ</p><h2>Хурдны өлзий дэлгэрэх болтугай</h2><a href="#search">ЭРХЭЭ ОДОО ШАЛГАХ <ArrowUpRight size={16}/></a></section>
+    <section className="closing-band"><div className="closing-ornament">ᠮ</div><p>МОНГОЛЫН ХИЙМОРЬ · ХУРДНЫ БАХАРХАЛ</p><h2>{campaign?.closingTitle || "Хурдны өлзий дэлгэрэх болтугай"}</h2><a href="#search">ЭРХЭЭ ОДОО ШАЛГАХ <ArrowUpRight size={16}/></a></section>
 
     <footer className="footer">
-      <div className="footer-main"><div className="brand"><span className="brand-mark"><span>ᠮ</span></span><span className="brand-name"><strong>СҮХБААТАРЫН ХУРД</strong><small>СУГАЛААТ ХУДАЛДАА</small></span></div><p>Монгол өв соёл, хурдны хийморийг эрхэмлэн дээдэлье.</p><div className="footer-actions">{campaign?.facebookPageUrl && <a href={campaign.facebookPageUrl} target="_blank" rel="noopener noreferrer">FACEBOOK PAGE ↗</a>}<a href="#home">ДЭЭШ БУЦАХ ↑</a></div></div>
+      <div className="footer-main"><div className="brand"><span className="brand-mark"><span>ᠮ</span></span><span className="brand-name"><strong>СҮХБААТАРЫН ХУРД</strong><small>СУГАЛААТ ХУДАЛДАА</small></span></div><p>{campaign?.footerDescription || "Монгол өв соёл, хурдны хийморийг эрхэмлэн дээдэлье."}</p><div className="footer-actions">{campaign?.facebookPageUrl && <a href={campaign.facebookPageUrl} target="_blank" rel="noopener noreferrer">FACEBOOK PAGE ↗</a>}<a href="#home">ДЭЭШ БУЦАХ ↑</a></div></div>
       <div className="footer-bottom"><span>© {new Date().getFullYear()} Сүхбаатарын хурд. Бүх эрх хуулиар хамгаалагдсан.</span><span>МОНГОЛ УЛС</span></div>
     </footer>
   </main>;
