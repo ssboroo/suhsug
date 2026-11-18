@@ -26,6 +26,12 @@ model Campaign {
   accountNumber String?
   iban String?
   facebookPageUrl String?
+  heroEyebrow String?
+  heroOverline String?
+  faqContent String? @db.Text
+  stepsContent String? @db.Text
+  closingTitle String?
+  footerDescription String?
   status       String   @default("DRAFT")
   isActive     Boolean  @default(false)
   createdAt    DateTime @default(now())
