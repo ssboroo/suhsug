@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Нэвтрэх шаардлагатай." }, { status: 401 });
   const form = await request.formData();
   const file = form.get("file");
-  const mode = String(form.get("mode") ?? "APPEND");
+  const mode = "APPEND"; // All new imports append; existing campaign data is never replaced.
   if (!(file instanceof File) || !/\.(xlsx|csv)$/i.test(file.name)) return NextResponse.json({ error: "Зөвхөн .xlsx эсвэл .csv файл оруулна уу." }, { status: 400 });
   if (file.size === 0 || file.size > MAX_FILE_BYTES) return NextResponse.json({ error: "Файлын хэмжээ 1 byte–12MB байх ёстой." }, { status: 400 });
   if (!["APPEND", "REPLACE"].includes(mode)) return NextResponse.json({ error: "Импортын горим буруу байна." }, { status: 400 });
