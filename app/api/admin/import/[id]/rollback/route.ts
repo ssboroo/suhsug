@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 
+export const maxDuration = 60;
+
 export async function POST(_request: Request, context: { params: Promise<{ id: string }> }) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Нэвтрэх шаардлагатай." }, { status: 401 });
   const { id } = await context.params;
