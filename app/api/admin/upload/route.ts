@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { isAdmin } from "@/lib/auth";
+import { db } from "@/lib/db";
 
 export const maxDuration = 30;
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
@@ -61,6 +62,7 @@ export async function POST(request: NextRequest) {
     }));
     const base = publicBase.toString().replace(/\/$/, "");
     const url = `${base}/${key.split("/").map(encodeURIComponent).join("/")}`;
+    await db.adminAuditLog.create({ data: { action: "CAMPAIGN_IMAGE_UPLOAD", details: { key, contentType: mime, size: body.length } } }).catch(() => undefined);
     return NextResponse.json({ ok: true, url });
   } catch {
     return NextResponse.json({ error: "Зургийг хадгалахад алдаа гарлаа. S3/R2 тохиргоогоо шалгана уу." }, { status: 502 });
