@@ -30,6 +30,7 @@ Next.js 15 App Router, TypeScript, Tailwind CSS 4, PostgreSQL, Prisma, ExcelJS, 
    - `ADMIN_SESSION_SECRET` — `openssl rand -hex 32` командаар үүсгэсэн 64 тэмдэгтээс багагүй нууц.
    - `NEXT_PUBLIC_SITE_URL` — HTTPS production домэйн.
    - `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` — production rate limiting-д заавал.
+   - `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_BASE_URL` — S3-compatible storage (Cloudflare R2/S3) ашиглан зураг upload хийхэд.
 3. Dependencies суулгана: `npm install`.
 4. Prisma client үүсгэнэ: `npx prisma generate`.
 5. Production migration ажиллуулна: `npx prisma migrate deploy`.
@@ -63,7 +64,7 @@ GitHub Actions нь push болон pull request бүрт PostgreSQL service д�
 
 ## Одоогоор үлдсэн production ажил
 - Бодит hosting, домэйн, PostgreSQL, Upstash Redis credentials тохируулах.
-- Object storage (S3/R2 зэрэг) холбож админаас зураг шууд upload хийх; одоогоор админ HTTPS зургийн холбоос оруулна.
+- Зураг upload хийхэд S3-compatible object storage-ийн credentials болон public bucket/domain тохируулах.
 - Excel баганын визуал mapping нэмэх.
 - Бодит Excel файлууд болон олон хэрэглэгчийн ачааллын тест хийх.
 - Facebook Open Graph зурагт өөрийн эрхтэй зураг ашиглах.
